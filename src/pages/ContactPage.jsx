@@ -6,7 +6,7 @@ import Contact from '../components/Contact.jsx'
 export default function ContactPage() {
   return (
     <>
-      <PageHero color="purple" eyebrow={contactPage.eyebrow} heading={contactPage.heading} sub={contactPage.sub} decor />
+      <PageHero color="purple" heading={contactPage.heading} sub={contactPage.sub} decor />
       <section className="section contact-form-section">
         <div className="container">
           <ContactForm />

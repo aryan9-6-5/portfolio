@@ -142,7 +142,7 @@ export default function About() {
 
               <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(29, 29, 29, 0.08)' }}>
                 <span className="label" style={{ display: 'block', marginBottom: 12 }}>
-                  {coding.eyebrow}
+                  Technologies & Frameworks
                 </span>
                 <div className="portfolio-tags">
                   {coding.stack.map((s) => (

@@ -6,7 +6,6 @@ export default function Certifications() {
     <section id="certifications" className="section certs-section">
       <div className="container">
         <Reveal className="section-head" y={10}>
-          <div className="section-eyebrow">{certifications.eyebrow}</div>
           <h2 className="heading-1">{certifications.heading}</h2>
         </Reveal>
 

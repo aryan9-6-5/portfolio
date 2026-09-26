@@ -23,10 +23,6 @@ export default function Contact() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <div className="section-eyebrow">{contact.eyebrow}</div>
-        </Reveal>
-
-        <Reveal delay={0.15}>
           <h2 className="heading-1 contact-headline">{contact.headline}</h2>
         </Reveal>
 

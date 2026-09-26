@@ -4,11 +4,15 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 // Full-hero interactive image/color grid
 // Tiles near the cursor magnify, brighten, and gently shift; tiles further away settle back.
 // Generates enough rows & columns to completely cover the entire hero section on all viewports.
-const SHADES = ['#E3F2FF', '#C7D9FC', '#A9C2FB', '#8CAAF5', '#BFD3FA', '#6F92EE', '#D6E4FD', '#5A82E0']
+const SHADES = [
+  '#E3F2FF', '#C7D9FC', '#A9C2FB', '#8CAAF5',
+  '#BFD3FA', '#6F92EE', '#D6E4FD', '#5A82E0',
+  '#B2CEFA', '#7FA2F0', '#CFDFFC', '#4D78DE'
+]
 const RADIUS = 220
 const PUSH = 14
 
-function Tile({ shade, index, registerRef }) {
+function Tile({ tileData, index, registerRef }) {
   const scale = useMotionValue(1)
   const bright = useMotionValue(1)
   const offsetX = useMotionValue(0)
@@ -23,7 +27,15 @@ function Tile({ shade, index, registerRef }) {
     <motion.div
       ref={(el) => registerRef(index, el, scale, bright, offsetX, offsetY)}
       className="hero-grid-tile"
-      style={{ background: shade, scale: springScale, filter, x: springX, y: springY }}
+      style={{
+        background: tileData.shade,
+        scale: springScale,
+        filter,
+        x: springX,
+        y: springY,
+        borderRadius: `${tileData.borderRadius}px`,
+        rotate: tileData.rotate,
+      }}
     />
   )
 }
@@ -44,10 +56,19 @@ export default function HeroImageGrid() {
     return cols * rows
   })
 
-  const tiles = useMemo(
-    () => Array.from({ length: tileCount }, (_, i) => SHADES[i % SHADES.length]),
-    [tileCount]
-  )
+  // Organically and randomly arrange the tiles
+  const tiles = useMemo(() => {
+    let seed = 42
+    function rnd() {
+      seed = (seed * 9301 + 49297) % 233280
+      return seed / 233280
+    }
+    return Array.from({ length: tileCount }, () => ({
+      shade: SHADES[Math.floor(rnd() * SHADES.length)],
+      rotate: (rnd() - 0.5) * 4,
+      borderRadius: Math.floor(rnd() * 6) + 4,
+    }))
+  }, [tileCount])
 
   function registerRef(index, el, scale, bright, offsetX, offsetY) {
     if (!el) {
@@ -147,8 +168,8 @@ export default function HeroImageGrid() {
 
   return (
     <div ref={containerRef} className="hero-grid" aria-hidden="true">
-      {tiles.map((shade, i) => (
-        <Tile key={i} shade={shade} index={i} registerRef={registerRef} />
+      {tiles.map((tile, i) => (
+        <Tile key={i} tileData={tile} index={i} registerRef={registerRef} />
       ))}
     </div>
   )

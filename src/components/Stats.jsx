@@ -8,7 +8,6 @@ export default function Stats() {
     <section className="section stats-section">
       <div className="container">
         <Reveal className="section-head" y={10}>
-          <div className="section-eyebrow">{stats.eyebrow}</div>
           <h2 className="heading-1">{stats.heading}</h2>
           <p className="body-text">{stats.sub}</p>
         </Reveal>

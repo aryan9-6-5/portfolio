@@ -3,63 +3,32 @@ import { AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { projects } from '../data/content.js'
 import { IconArrow } from './icons.jsx'
-import Reveal from './Reveal.jsx'
-import StackedCards from './StackedCards.jsx'
 import SlideText from './SlideText.jsx'
 import ProjectModal from './ProjectModal.jsx'
+import TicketStack from './TicketStack.jsx'
+import ProjectTicket from './ProjectTicket.jsx'
 
-const SHAPES = {
-  blue: ['#D1E8FD', '#EEF7FF'],
-  yellow: ['#FEDE8D', '#FFF2D0'],
-  green: ['#C8F0E8', '#E9F9F6'],
-  pink: ['#F9D4F4', '#FFF1FD'],
-}
-
-function ProjectVisual({ item }) {
-  const [c1, c2] = SHAPES[item.accent] || SHAPES.blue
-  return (
-    <div className={`portfolio-visual ${item.accent}`}>
-      <div className="portfolio-visual-inner">
-        <span className="portfolio-visual-shape" style={{ width: 140, height: 140, background: c1, top: -30, right: -30 }} />
-        <span className="portfolio-visual-shape" style={{ width: 90, height: 90, background: c2, bottom: -20, left: -10 }} />
-        <span className="portfolio-visual-initials">{item.name.slice(0, 2).toUpperCase()}</span>
-        <span className="portfolio-visual-view">View project</span>
-        <span className="portfolio-visual-badge">{item.category}</span>
-      </div>
-    </div>
-  )
-}
-
-function ProjectCard({ item, reverse, onClick }) {
-  return (
-    <div className={`card portfolio-card${reverse ? ' reverse' : ''}`} onClick={onClick} style={{ cursor: 'pointer' }}>
-      <ProjectVisual item={item} />
-      <div className="portfolio-body">
-        <span className="label">{item.category}</span>
-        <h3 className="heading-2">{item.name}</h3>
-        <span className="portfolio-role">{item.role}</span>
-        <p className="body-text">{item.desc}</p>
-        <div className="portfolio-tags">
-          {item.tags.map((t) => <span key={t} className="tag-chip">{t}</span>)}
-        </div>
-        <span className="btn" style={{ alignSelf: 'flex-start', marginTop: 8 }}>
-          <SlideText>View Project</SlideText> <IconArrow />
-        </span>
-      </div>
-    </div>
-  )
-}
-
+/**
+ * ProjectList for standalone pages (like /projects)
+ * Renders the collectible project tickets in a grid or stack
+ */
 export function ProjectList({ items }) {
   const [selected, setSelected] = useState(null)
+
   return (
     <>
-      <StackedCards>
-        {items.map((item, i) => (
-          <ProjectCard key={item.name} item={item} reverse={i % 2 === 1} onClick={() => setSelected(item)} />
+      <div className="collectible-tickets-grid">
+        {items.map((item) => (
+          <div key={item.name} className="ticket-grid-item">
+            <ProjectTicket
+              project={item}
+              isPunched={true}
+              onSelect={(p) => setSelected(p)}
+            />
+          </div>
         ))}
-      </StackedCards>
-      <p className="portfolio-note">{projects.note}</p>
+      </div>
+
       <AnimatePresence>
         {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
       </AnimatePresence>
@@ -67,23 +36,41 @@ export function ProjectList({ items }) {
   )
 }
 
-export default function Portfolio() {
-  const preview = projects.items.slice(0, 2)
+/**
+ * Portfolio (Work Section)
+ * Scroll-driven physical collectible ticket experience with
+ * mechanical ticket puncher entering from the left and punch collection dock.
+ */
+export default function Portfolio({ maxItems = 3 }) {
+  const [selectedProject, setSelectedProject] = useState(null)
+  const displayItems = projects.items.slice(0, maxItems)
+
   return (
-    <section id="work" className="section portfolio-section">
-      <div className="container">
-        <Reveal className="section-head" y={10}>
-          <div className="section-eyebrow">{projects.eyebrow}</div>
-          <h2 className="heading-1">{projects.heading}</h2>
-          <p className="body-text">{projects.sub}</p>
-        </Reveal>
+    <section id="work" className="section portfolio-ticket-experience">
+      {/* Scroll-Driven Pinned Ticket Stack with Puncher and Collection Tray */}
+      <TicketStack
+        projects={displayItems}
+        onSelectProject={(project) => setSelectedProject(project)}
+      />
 
-        <ProjectList items={preview} />
-
+      {/* Post-Runway Footer with See All Work link */}
+      <div className="container" style={{ position: 'relative', zIndex: 10, padding: '40px 0 20px' }}>
         <div className="see-all-wrap">
-          <Link className="btn btn-accent" to={projects.seeAll.to}><SlideText>{projects.seeAll.label}</SlideText> <IconArrow /></Link>
+          <Link className="btn btn-accent" to={projects.seeAll.to}>
+            <SlideText>See all work ({projects.items.length} projects)</SlideText> <IconArrow />
+          </Link>
         </div>
       </div>
+
+      {/* Project Detail Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   )
 }

@@ -26,7 +26,6 @@ export default function PageHero({ color = 'blue', eyebrow, heading, sub, decor 
         </>
       )}
       <Reveal className="page-hero-wrap" y={10}>
-        <div className="section-eyebrow" style={{ alignSelf: 'center' }}>{eyebrow}</div>
         <h1 className="heading-1">{heading}</h1>
         {sub && <p className="body-24">{sub}</p>}
       </Reveal>
