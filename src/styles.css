@@ -292,29 +292,32 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   overflow: hidden;
 }
 @media (min-width: 810px) { .hero-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); grid-auto-rows: 90px; } }
-.hero-grid-tile { width: 100%; height: 100%; will-change: transform; }
+.hero-grid-tile {
+  width: 100%;
+  height: 100%;
+  will-change: transform, filter;
+  border-radius: 4px;
+}
 
-/* A full cloud (not a single glow spark) the headline sits inside — several
-   overlapping puffs, wide and flat like an actual cloud silhouette. */
-.hero-cloud {
+/* Full cloud SVG container & shape */
+.hero-cloud-wrapper {
   position: absolute;
   z-index: 1;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -48%);
-  width: min(1150px, 98vw);
-  height: min(620px, 78vh);
+  transform: translate(-50%, -46%);
+  width: min(1220px, 98vw);
+  height: min(680px, 82vh);
   pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 60%, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0) 42%),
-    radial-gradient(circle at 28% 55%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 38%),
-    radial-gradient(circle at 72% 55%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 38%),
-    radial-gradient(circle at 38% 30%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 34%),
-    radial-gradient(circle at 62% 30%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 34%),
-    radial-gradient(circle at 15% 68%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 30%),
-    radial-gradient(circle at 85% 68%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 30%),
-    radial-gradient(circle at 50% 78%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 32%);
-  filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-cloud-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 20px 48px rgba(10, 82, 240, 0.14)) drop-shadow(0 4px 14px rgba(29, 29, 29, 0.04));
 }
 .header-socials { display: none; gap: 10px; }
 .icon-btn {
@@ -450,6 +453,141 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
 @keyframes hero-bob-3 {
   0%, 100% { transform: translateY(0) rotate(-6deg); }
   50% { transform: translateY(-8px) rotate(-2deg); }
+}
+
+/* ---- Quick links ---- */
+.quicklinks-section { background: var(--white); padding-top: 0; }
+.quicklinks-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: -70px;
+  position: relative;
+  z-index: 3;
+}
+@media (min-width: 640px) { .quicklinks-grid { grid-template-columns: repeat(3, 1fr); } }
+.quicklink-card { padding: 40px 30px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.quicklink-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  border: var(--border);
+  transition: transform 0.25s var(--ease-standard), background 0.25s var(--ease-standard);
+}
+.quicklink-icon.blue { background: var(--blue-soft); }
+.quicklink-icon.yellow { background: var(--yellow-soft); }
+.quicklink-icon.green { background: var(--green-soft); }
+.quicklink-card {
+  transition: transform 0.3s var(--ease-standard), box-shadow 0.3s var(--ease-standard);
+}
+.quicklink-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(29,29,29,0.08); }
+.quicklink-card:hover .quicklink-icon { transform: rotate(6deg) scale(1.08); }
+.quicklink-card:hover .quicklink-icon.blue { background: var(--blue-hover); }
+.quicklink-card:hover .quicklink-icon.yellow { background: var(--yellow-hover); }
+.quicklink-card:hover .quicklink-icon.green { background: var(--green-hover); }
+.quicklink-card p { color: rgba(29,29,29,0.65); }
+
+/* ---- ScrollFanCards (3-Card Interactive Deck) ---- */
+.scroll-fan-section {
+  background: var(--white);
+  padding: 40px 0 70px;
+  position: relative;
+  z-index: 3;
+  overflow: visible;
+}
+.scroll-fan-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 420px;
+  position: relative;
+}
+.scroll-fan-deck {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 380px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.scroll-fan-slot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 370px;
+  margin-top: -185px;
+  margin-left: -160px;
+  will-change: transform;
+  transform: translate3d(var(--scroll-x, 0px), var(--scroll-y, 0px), 0) rotate(var(--scroll-rot, 0deg));
+  pointer-events: auto;
+  transition: z-index 0s linear 0.25s;
+}
+/* Hit bridge so moving between cards across the gap never flickers or drops hover */
+.scroll-fan-slot::before {
+  content: '';
+  position: absolute;
+  inset: -16px -24px;
+  z-index: -1;
+  pointer-events: auto;
+}
+.scroll-fan-slot.is-hovered {
+  z-index: 10 !important;
+  transition: z-index 0s linear 0s;
+}
+.scroll-fan-card {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 38px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 10px 30px rgba(29, 29, 29, 0.07);
+  will-change: transform, box-shadow;
+  transform: translate3d(var(--hover-x, 0px), var(--hover-y, 0px), 0) rotate(var(--hover-rot, 0deg)) scale(var(--hover-scale, 1));
+  transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 500ms cubic-bezier(0.23, 1, 0.32, 1), border-color 300ms ease;
+  cursor: pointer;
+}
+.scroll-fan-card.is-selected {
+  box-shadow: 0 24px 56px rgba(29, 29, 29, 0.16);
+  border-color: rgba(29, 29, 29, 0.85);
+}
+.scroll-fan-card .quicklink-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border);
+  transition: transform 0.3s var(--ease-standard), background 0.3s var(--ease-standard);
+}
+.scroll-fan-card.is-selected .quicklink-icon {
+  transform: rotate(8deg) scale(1.1);
+}
+.scroll-fan-card p {
+  color: rgba(29, 29, 29, 0.68);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .scroll-fan-slot {
+    width: 270px;
+    height: 350px;
+    margin-top: -175px;
+    margin-left: -135px;
+  }
+  .scroll-fan-card {
+    padding: 28px 20px;
+  }
 }
 
 /* ---- Portfolio ---- */
@@ -1065,3 +1203,379 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   font-weight: 600;
   margin-bottom: 6px;
 }
+
+/* ==========================================================================
+   ABOUT ME — PINNED THOUGHT CLOUDS SCROLLER (Constant Artwork Background)
+   ========================================================================== */
+.about-pinned-section {
+  position: relative;
+  height: 380vh; /* Long scroll runway to comfortably reveal all thoughts sequentially */
+  background: #880403;
+}
+
+/* Sticky viewport that stays fixed on screen throughout the 380vh scroll */
+.about-pinned-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #880403;
+}
+
+/* Constant Artwork Background (Character standing in center with red doodle art) */
+.about-artwork-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.about-artwork-img {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: contain;
+  object-position: center center;
+  user-select: none;
+}
+
+/* Stage Area for Thought Clouds */
+.about-clouds-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Individual Thought Cloud positioning (4-corner layout around character) */
+.pinned-thought-cloud-item {
+  position: absolute;
+  width: min(420px, 30vw);
+  z-index: 15;
+  will-change: transform, opacity;
+}
+
+/* 1st & 2nd Thoughts (Top Row - positioned safely below the floating navbar) */
+.pinned-thought-cloud-item.pos-top-left {
+  left: 3.5%;
+  top: max(96px, 16vh);
+}
+
+.pinned-thought-cloud-item.pos-top-right {
+  right: 3.5%;
+  top: max(96px, 16vh);
+}
+
+/* 3rd & 4th Thoughts (Bottom Row - a little below) */
+.pinned-thought-cloud-item.pos-bottom-left {
+  left: 3.5%;
+  top: max(430px, 57vh);
+}
+
+.pinned-thought-cloud-item.pos-bottom-right {
+  right: 3.5%;
+  top: max(430px, 57vh);
+}
+
+/* Cloud Bubble Container */
+.thought-bubble-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.thought-cloud-bubble {
+  background: #FFFFFF;
+  border: 3.5px solid #1D1D1D;
+  border-radius: 38px;
+  padding: 22px 28px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.32), 0 4px 14px rgba(0, 0, 0, 0.14);
+  position: relative;
+  z-index: 2;
+  color: #1D1D1D;
+  transition: transform 0.3s var(--ease-standard), box-shadow 0.3s var(--ease-standard);
+}
+
+.thought-cloud-bubble:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* Cloud Burst Rays */
+.cloud-rays {
+  position: absolute;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.rays-left {
+  top: -16px;
+  left: 28px;
+  transform: rotate(-14deg);
+}
+
+.rays-right {
+  top: -16px;
+  right: 28px;
+  transform: rotate(14deg);
+}
+
+.ray {
+  display: inline-block;
+  width: 6px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1.5px solid #1D1D1D;
+}
+
+.ray-blue {
+  background: #38BDF8;
+  height: 16px;
+  transform: rotate(-16deg);
+}
+
+.ray-yellow {
+  background: #FDE047;
+  height: 22px;
+  transform: translateY(-3px);
+}
+
+.ray-pink {
+  background: #FB7185;
+  height: 17px;
+  transform: rotate(16deg);
+}
+
+/* Thought Tails: Trail connecting cloud toward character in center */
+.thought-tail {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.tail-bottom-right {
+  bottom: -20px;
+  right: 42px;
+  flex-direction: row;
+}
+
+.tail-bottom-left {
+  bottom: -20px;
+  left: 42px;
+  flex-direction: row-reverse;
+}
+
+.tail-top-right {
+  top: -20px;
+  right: 42px;
+  flex-direction: row;
+}
+
+.tail-top-left {
+  top: -20px;
+  left: 42px;
+  flex-direction: row-reverse;
+}
+
+.tail-dot {
+  background: #FFFFFF;
+  border: 2.5px solid #1D1D1D;
+  border-radius: 50%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+}
+
+.dot-lg { width: 18px; height: 18px; }
+.dot-md { width: 13px; height: 13px; }
+.dot-sm { width: 8px; height: 8px; }
+
+/* Thought Content */
+.thought-meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.thought-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 2px solid #1D1D1D;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.thought-badge.blue {
+  background: var(--blue);
+  color: #0A52F0;
+}
+
+.thought-badge.yellow {
+  background: var(--yellow);
+  color: #92400E;
+}
+
+.thought-badge.green {
+  background: var(--green);
+  color: #0F766E;
+}
+
+.thought-badge.pink {
+  background: var(--pink);
+  color: #BE185D;
+}
+
+.thought-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1D1D1D;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.thought-text {
+  font-size: 15.5px;
+  line-height: 1.62;
+  color: #374151;
+  font-weight: 400;
+  margin: 0;
+}
+
+
+
+/* ==========================================================================
+   ABOUT ME — SKILLS & STACK SECTION (Follows thoughts scroller)
+   ========================================================================== */
+.about-skills-section {
+  background: #880403;
+  padding: 40px 0 120px;
+  position: relative;
+  z-index: 2;
+}
+
+.about-skills-footer {
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+.about-skills-card {
+  background: #FFFFFF;
+  border: 3.5px solid #1D1D1D;
+  border-radius: 28px;
+  padding: 38px 44px;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.3);
+  color: #1D1D1D;
+}
+
+.about-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 36px;
+  margin-top: 14px;
+}
+
+.skill-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-bar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1D1D1D;
+}
+
+.skill-bar-label {
+  font-weight: 600;
+  color: #1D1D1D;
+}
+
+.skill-bar-value {
+  font-weight: 700;
+  color: #0A52F0;
+  font-feature-settings: 'tnum';
+}
+
+.skill-bar-track {
+  height: 10px;
+  background: rgba(29, 29, 29, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1.5px solid rgba(29, 29, 29, 0.12);
+}
+
+.skill-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3B82F6 0%, #06B6D4 100%);
+  border-radius: 999px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1100px) {
+  .pinned-thought-cloud-item {
+    width: min(390px, 34vw);
+  }
+  .thought-cloud-bubble {
+    padding: 24px 26px;
+  }
+  .thought-heading {
+    font-size: 20px;
+  }
+  .thought-text {
+    font-size: 14.5px;
+  }
+}
+
+@media (max-width: 860px) {
+  /* On mobile portrait, position cloud centered at the bottom */
+  .pinned-thought-cloud-item {
+    width: 90%;
+    max-width: 440px;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    top: auto !important;
+    bottom: 50px !important;
+  }
+
+  .about-artwork-img {
+    object-position: center 20%;
+  }
+
+  .about-skills-card {
+    padding: 26px 24px;
+  }
+
+  .about-skills-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .thought-tail {
+    display: none; /* Tail dots don't make sense when centered below */
+  }
+}
+
+

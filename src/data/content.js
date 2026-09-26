@@ -154,15 +154,49 @@ export const research = {
 }
 
 export const about = {
-  eyebrow: 'About me',
-  heading: 'What I actually spend my time on',
+  eyebrow: "Inside Aryan's Mind",
+  heading: 'What I Actually Think About',
+  sub: 'Four thoughts on engineering, research, and what makes things tick — one cloud at a time.',
   pose: 'resting-chin',
-  paragraphs: [
-    "Before I start anything, I ask myself one question: what's actually hard here. That's basically why I ended up in computer science. This field gives you the closest thing to a blank check to turn whatever you're imagining into something real — you just need to know how to build it.",
-    'Right now that curiosity is split two ways: LAML, a retinal-disease classifier that grew into a real explainability problem and became my first published research (IEEE ICNPCV 2026) — and solo work on systems that adapt to how someone actually wants to use them, instead of forcing one rigid workflow.',
-    'Outside of that: unreasonably invested in Game of Thrones discourse, and cricket is the one place my competitive streak shows up unfiltered.',
+  thoughts: [
+    {
+      step: '01',
+      tag: 'The Core Driver',
+      title: "What's actually hard here?",
+      thought: "Before I start anything, I ask myself one question: what's actually hard here. That's why I chose computer science. This field gives you the closest thing to a blank check to turn whatever you're imagining into reality — you just need to know how to build it.",
+      panel: '/about-thoughts/thought-1.jpg',
+      direction: 'cloud-left',
+      color: 'blue',
+    },
+    {
+      step: '02',
+      tag: 'Research & Explainability',
+      title: 'The LAML Epiphany',
+      thought: 'Curiosity led me straight into interpretability. My work on LAML — a retinal-disease classifier that grew into an explainability problem — became my first published research at IEEE ICNPCV 2026. If a model cannot explain itself, it is just guessing with confidence.',
+      panel: '/about-thoughts/thought-2.jpg',
+      direction: 'cloud-right',
+      color: 'yellow',
+    },
+    {
+      step: '03',
+      tag: 'Engineering Philosophy',
+      title: 'Building for Real Humans',
+      thought: 'I build AI/ML systems that adapt to how someone actually wants to use them, instead of forcing one rigid, fragile workflow. Getting Groq, Llama, and two ML models to stop contradicting each other was the hard part — not drawing the architecture diagram.',
+      panel: '/about-thoughts/thought-3.jpg',
+      direction: 'cloud-left',
+      color: 'green',
+    },
+    {
+      step: '04',
+      tag: 'Beyond the Terminal',
+      title: 'Outside the Code',
+      thought: 'When the laptop closes: unreasonably invested in Game of Thrones lore and discourse, and cricket is the one place my competitive streak shows up completely unfiltered.',
+      panel: '/about-thoughts/thought-4.jpg',
+      direction: 'cloud-right',
+      color: 'pink',
+    },
   ],
-  skillsLabel: 'Self-rated, not benchmarked',
+  skillsLabel: 'Tools & stack behind the thoughts',
   skills: [
     { label: 'Python / PyTorch', value: 90 },
     { label: 'Data Engineering', value: 85 },

@@ -1,18 +1,14 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
-// Full-hero version of the Codrops "Interactive Image Grid" demo
-// (tympanus.net/Tutorials/InteractiveImageGrid) — tiles near the cursor
-// magnify, brighten, and nudge away from it; tiles further away settle back
-// down. No photos to tile here, so each cell is a flat shade of blue instead
-// of an image. One rAF-throttled window listener updates every tile — not
-// one listener per tile, which would mean 60+ separate layout reads per move.
+// Full-hero interactive image/color grid
+// Tiles near the cursor magnify, brighten, and gently shift; tiles further away settle back.
+// Generates enough rows & columns to completely cover the entire hero section on all viewports.
 const SHADES = ['#E3F2FF', '#C7D9FC', '#A9C2FB', '#8CAAF5', '#BFD3FA', '#6F92EE', '#D6E4FD', '#5A82E0']
-const TILE_COUNT = 64
-const RADIUS = 240
-const PUSH = 16
+const RADIUS = 220
+const PUSH = 14
 
-function Tile({ shade, registerRef }) {
+function Tile({ shade, index, registerRef }) {
   const scale = useMotionValue(1)
   const bright = useMotionValue(1)
   const offsetX = useMotionValue(0)
@@ -25,7 +21,7 @@ function Tile({ shade, registerRef }) {
 
   return (
     <motion.div
-      ref={(el) => registerRef(el, scale, bright, offsetX, offsetY)}
+      ref={(el) => registerRef(index, el, scale, bright, offsetX, offsetY)}
       className="hero-grid-tile"
       style={{ background: shade, scale: springScale, filter, x: springX, y: springY }}
     />
@@ -33,13 +29,75 @@ function Tile({ shade, registerRef }) {
 }
 
 export default function HeroImageGrid() {
-  const tiles = useMemo(() => Array.from({ length: TILE_COUNT }, (_, i) => SHADES[i % SHADES.length]), [])
+  const containerRef = useRef(null)
   const entriesRef = useRef([])
+  const centersRef = useRef([])
 
-  function registerRef(el, scale, bright, offsetX, offsetY) {
-    if (!el) return
-    entriesRef.current.push({ el, scale, bright, offsetX, offsetY })
+  // Dynamically compute enough tiles so all columns and rows are completely filled
+  const [tileCount, setTileCount] = useState(() => {
+    if (typeof window === 'undefined') return 240
+    const w = window.innerWidth || 1440
+    const h = window.innerHeight || 850
+    const size = w >= 810 ? 92 : 72
+    const cols = Math.ceil(w / size) + 2
+    const rows = Math.ceil(h / size) + 2
+    return cols * rows
+  })
+
+  const tiles = useMemo(
+    () => Array.from({ length: tileCount }, (_, i) => SHADES[i % SHADES.length]),
+    [tileCount]
+  )
+
+  function registerRef(index, el, scale, bright, offsetX, offsetY) {
+    if (!el) {
+      entriesRef.current[index] = null
+      return
+    }
+    entriesRef.current[index] = { el, scale, bright, offsetX, offsetY }
   }
+
+  // Pre-calculate centers on mount, resize, and scroll to avoid layout thrashing during mouse movement
+  function updateCenters() {
+    centersRef.current = entriesRef.current.map((item) => {
+      if (!item?.el) return null
+      const rect = item.el.getBoundingClientRect()
+      return { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 }
+    })
+  }
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    function computeGrid() {
+      if (!containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const size = window.innerWidth >= 810 ? 92 : 72
+      const cols = Math.ceil(rect.width / size) + 2
+      const rows = Math.ceil(rect.height / size) + 2
+      const needed = cols * rows
+      setTileCount((prev) => (needed > prev ? needed : prev))
+      setTimeout(updateCenters, 100)
+    }
+
+    computeGrid()
+    const ro = new ResizeObserver(computeGrid)
+    ro.observe(el)
+    window.addEventListener('resize', computeGrid)
+    window.addEventListener('scroll', updateCenters, { passive: true })
+
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', computeGrid)
+      window.removeEventListener('scroll', updateCenters)
+    }
+  }, [])
+
+  useEffect(() => {
+    const t = setTimeout(updateCenters, 150)
+    return () => clearTimeout(t)
+  }, [tileCount])
 
   useEffect(() => {
     let raf = null
@@ -47,24 +105,39 @@ export default function HeroImageGrid() {
       if (raf) return
       raf = requestAnimationFrame(() => {
         raf = null
-        for (const { el, scale, bright, offsetX, offsetY } of entriesRef.current) {
-          const rect = el.getBoundingClientRect()
-          const cx = rect.left + rect.width / 2
-          const cy = rect.top + rect.height / 2
-          const dx = cx - e.clientX
-          const dy = cy - e.clientY
+        if (!centersRef.current.length) {
+          updateCenters()
+        }
+        const centers = centersRef.current
+        const entries = entriesRef.current
+        const len = Math.min(entries.length, centers.length)
+
+        for (let i = 0; i < len; i++) {
+          const item = entries[i]
+          const center = centers[i]
+          if (!item || !center) continue
+
+          const dx = center.cx - e.clientX
+          const dy = center.cy - e.clientY
           const dist = Math.hypot(dx, dy)
-          const t = Math.min(dist / RADIUS, 1)
-          const push = 1 - t
-          scale.set(1 + push * 0.55)
-          bright.set(1 + push * 0.4)
-          if (dist > 0.01) {
-            offsetX.set((dx / dist) * push * PUSH)
-            offsetY.set((dy / dist) * push * PUSH)
+          if (dist < RADIUS) {
+            const push = 1 - dist / RADIUS
+            item.scale.set(1 + push * 0.5)
+            item.bright.set(1 + push * 0.35)
+            if (dist > 0.01) {
+              item.offsetX.set((dx / dist) * push * PUSH)
+              item.offsetY.set((dy / dist) * push * PUSH)
+            }
+          } else {
+            item.scale.set(1)
+            item.bright.set(1)
+            item.offsetX.set(0)
+            item.offsetY.set(0)
           }
         }
       })
     }
+
     window.addEventListener('mousemove', onMove, { passive: true })
     return () => {
       window.removeEventListener('mousemove', onMove)
@@ -73,8 +146,10 @@ export default function HeroImageGrid() {
   }, [])
 
   return (
-    <div className="hero-grid" aria-hidden="true">
-      {tiles.map((shade, i) => <Tile key={i} shade={shade} registerRef={registerRef} />)}
+    <div ref={containerRef} className="hero-grid" aria-hidden="true">
+      {tiles.map((shade, i) => (
+        <Tile key={i} shade={shade} index={i} registerRef={registerRef} />
+      ))}
     </div>
   )
 }

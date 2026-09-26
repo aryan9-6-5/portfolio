@@ -6,12 +6,13 @@ import AnimatedWords from './AnimatedWords.jsx'
 import SlideText from './SlideText.jsx'
 import HeroCardSpread from './HeroCardSpread.jsx'
 import HeroImageGrid from './HeroImageGrid.jsx'
+import HeroCloud from './HeroCloud.jsx'
 
 export default function Hero() {
   return (
     <section id="top" className="hero">
       <HeroImageGrid />
-      <div className="hero-cloud" aria-hidden="true" />
+      <HeroCloud />
 
       <span className="hero-doodle hero-doodle-pen"><IconPen /></span>
       <span className="hero-doodle hero-doodle-cup"><IconCup /></span>
