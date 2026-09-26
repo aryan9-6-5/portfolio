@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link, NavLink } from 'react-router-dom'
 import { nav } from '../data/content.js'
 import { ICONS, IconHamburger, IconClose } from './icons.jsx'
+import NameMark from './NameMark.jsx'
+import DrawUnderline from './DrawUnderline.jsx'
 
 export default function Nav() {
   const [sticky, setSticky] = useState(false)
@@ -22,12 +24,14 @@ export default function Nav() {
           animate={{ paddingTop: sticky ? 12 : 28, paddingBottom: sticky ? 12 : 28 }}
           transition={{ type: 'spring', duration: 0.8, bounce: 0.2 }}
         >
-          <Link to="/" className="header-logo" onClick={() => setOpen(false)}>{nav.name}</Link>
+          <Link to="/" className="header-logo" onClick={() => setOpen(false)}>
+            <NameMark>{nav.name}</NameMark>
+          </Link>
 
           <ul className="header-nav">
             {nav.links.map((l) => (
               <li key={l.label}>
-                <NavLink to={l.to} end={l.to === '/'}>{l.label}</NavLink>
+                <NavLink to={l.to} end={l.to === '/'}><DrawUnderline>{l.label}</DrawUnderline></NavLink>
               </li>
             ))}
           </ul>

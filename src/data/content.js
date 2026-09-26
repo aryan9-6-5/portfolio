@@ -137,16 +137,14 @@ export const research = {
   pose: 'questioning-chin',
   cards: [
     {
-      step: '01',
-      icon: 'flask',
+      note: 'field note — 01',
       title: 'NeuroPlastic — EEG error-signal adaptation',
       desc: 'Cross-participant EEG error-related-potential decoding, and online adaptation of a spiking neural network. The honest result: adaptation did not beat the frozen baseline (0.717 vs 0.692 AUROC). Reported plainly, not buried.',
       link: 'Read the full story',
       color: 'purple',
     },
     {
-      step: '02',
-      icon: 'brain',
+      note: 'field note — 02',
       title: 'Does an AI know it is wrong?',
       desc: "A 7-day public interpretability project comparing the brain's error-related potential to a language model's internal activations. Day 1: no probed layer beat chance. In progress.",
       link: 'Follow along',
@@ -170,6 +168,44 @@ export const about = {
     { label: 'Data Engineering', value: 85 },
     { label: 'Full-Stack (React)', value: 80 },
     { label: 'Cloud / MLOps', value: 70 },
+  ],
+}
+
+export const coreStrengths = {
+  eyebrow: 'Core strengths',
+  heading: "Claims are cheap. Here's the proof.",
+  sub: 'Hover a strength — every one of these is backed by something I actually shipped.',
+  items: [
+    {
+      title: 'Shipping under pressure',
+      story: "VitalWatch's agents had to agree with each other before the risk score ever reached a clinician. Getting Groq/Llama-3.3 reasoning and two separate ML models to stop contradicting each other was the actual hard part — not the pipeline diagram.",
+      color: 'blue',
+    },
+    {
+      title: 'Full-stack range',
+      story: "The hard part of Plattr wasn't the schema — it was making a tiffin subscription, a bulk order, and a catered event feel like one app instead of three stitched together. That's a UX problem, not a database problem.",
+      color: 'yellow',
+    },
+    {
+      title: 'Data at real scale',
+      story: "31.8M+ rows stops being an 'add an index' problem fast. Swapping NexusMart's query engine for DuckDB + Polars was the boring, correct fix most people skip because rewriting the pipeline is annoying.",
+      color: 'pink',
+    },
+    {
+      title: 'Reporting the truth, not the story',
+      story: "NeuroPlastic's online adaptation lost to the frozen baseline (0.717 vs 0.692 AUROC). That result went in the writeup exactly as measured — no reframing it after the fact.",
+      color: 'purple',
+    },
+    {
+      title: 'Production discipline',
+      story: "The gap between a fintrack demo and fintrack in production is auth, fraud detection, and an actual AWS EC2 deploy target. All three are live, not roadmap items.",
+      color: 'green',
+    },
+    {
+      title: 'Competitive by default',
+      story: '234+ LeetCode, 230+ GeeksforGeeks, runner-up at the Salesforce Agentforce Hackathon 2026. Keeping score is half the motivation.',
+      color: 'blue',
+    },
   ],
 }
 

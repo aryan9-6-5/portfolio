@@ -7,6 +7,14 @@ export default function ScrollManager() {
   const { pathname, hash } = useLocation()
 
   useEffect(() => {
+    // Without this, the browser's own scroll restoration on reload/back-nav
+    // can silently override the scrollTo(0) below after it runs.
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
+
+  useEffect(() => {
     if (hash) {
       const id = hash.slice(1)
       const raf = requestAnimationFrame(() => {
