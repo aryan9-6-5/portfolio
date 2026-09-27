@@ -23,18 +23,15 @@ export default function ScrollManager() {
         const el = document.getElementById(id)
         attempts += 1
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' })
-          if (attempts < 6) {
-            timeoutId = setTimeout(tryScroll, 150)
-          }
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
           return
         }
         if (attempts < 10) {
-          timeoutId = setTimeout(tryScroll, 100)
+          timeoutId = setTimeout(tryScroll, 80)
         }
       }
 
-      timeoutId = setTimeout(tryScroll, 0)
+      timeoutId = setTimeout(tryScroll, 50)
       return () => clearTimeout(timeoutId)
     }
 

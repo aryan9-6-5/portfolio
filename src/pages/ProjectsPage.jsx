@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { projects, projectsPage } from '../data/content.js'
 import { ProjectList } from '../components/Portfolio.jsx'
@@ -6,7 +7,53 @@ import ProjectModal from '../components/ProjectModal.jsx'
 import PageHero from '../components/PageHero.jsx'
 
 export default function ProjectsPage() {
-  const [selectedProject, setSelectedProject] = useState(null)
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  // Detect requested project from URL query (?open=id or ?project=id), hash (#id), or state
+  const targetId = useMemo(() => {
+    const searchParams = new URLSearchParams(location.search)
+    const fromQuery = searchParams.get('open') || searchParams.get('project')
+    if (fromQuery) return fromQuery.toLowerCase()
+
+    if (location.hash) {
+      const cleanHash = location.hash.replace('#', '').toLowerCase()
+      if (cleanHash) return cleanHash
+    }
+
+    if (location.state?.openProject) {
+      return String(location.state.openProject).toLowerCase()
+    }
+
+    return null
+  }, [location.search, location.hash, location.state])
+
+  const initialMatchedProject = useMemo(() => {
+    if (!targetId) return null
+    return projects.items.find(
+      (p) =>
+        p.id.toLowerCase() === targetId ||
+        p.name.toLowerCase() === targetId ||
+        p.code?.toLowerCase() === targetId
+    )
+  }, [targetId])
+
+  const [selectedProject, setSelectedProject] = useState(initialMatchedProject)
+
+  // When targetId changes or user navigates from main, automatically open the ticket
+  useEffect(() => {
+    if (initialMatchedProject) {
+      setSelectedProject(initialMatchedProject)
+    }
+  }, [initialMatchedProject])
+
+  const handleCloseModal = () => {
+    setSelectedProject(null)
+    // Clean up query param from URL without triggering page reload
+    if (location.search || location.hash) {
+      navigate('/projects', { replace: true })
+    }
+  }
 
   return (
     <>
@@ -28,6 +75,7 @@ export default function ProjectsPage() {
         <div className="container" style={{ position: 'relative' }}>
           <ProjectList
             items={projects.items}
+            initialTargetId={initialMatchedProject?.id}
             onSelectProject={(project) => setSelectedProject(project)}
           />
         </div>
@@ -38,7 +86,7 @@ export default function ProjectsPage() {
         {selectedProject && (
           <ProjectModal
             project={selectedProject}
-            onClose={() => setSelectedProject(null)}
+            onClose={handleCloseModal}
           />
         )}
       </AnimatePresence>

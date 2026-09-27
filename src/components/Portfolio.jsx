@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { projects } from '../data/content.js'
 import { IconArrow } from './icons.jsx'
 import SlideText from './SlideText.jsx'
@@ -48,9 +48,9 @@ function ScrollPunchTicket({
  * The single stapler aligns dynamically to whichever ticket is currently in view,
  * glides in from the left to punch the stub, and retracts offscreen.
  */
-export function ProjectList({ items, onSelectProject }) {
+export function ProjectList({ items, onSelectProject, initialTargetId }) {
   const [selected, setSelected] = useState(null)
-  const [punchedIds, setPunchedIds] = useState([])
+  const [punchedIds, setPunchedIds] = useState(() => (initialTargetId ? [initialTargetId] : []))
   const [punchingId, setPunchingId] = useState(null)
   const [fallingDisc, setFallingDisc] = useState(null)
   const [isMobile, setIsMobile] = useState(() =>
@@ -77,13 +77,21 @@ export function ProjectList({ items, onSelectProject }) {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // If opening directly to a ticket, ensure it is added to punchedIds
+  useEffect(() => {
+    if (initialTargetId) {
+      setPunchedIds((prev) => (prev.includes(initialTargetId) ? prev : [...prev, initialTargetId]))
+    }
+  }, [initialTargetId])
+
   // Grace period on route mount to avoid auto-punching during navigation scroll
   useEffect(() => {
+    const delay = initialTargetId ? 1100 : 450
     const timer = setTimeout(() => {
       isReadyRef.current = true
-    }, 450)
+    }, delay)
     return () => clearTimeout(timer)
-  }, [])
+  }, [initialTargetId])
 
   // Clear legacy storage on mount so every refresh starts with clean tickets
   useEffect(() => {
@@ -303,15 +311,19 @@ export function ProjectList({ items, onSelectProject }) {
  * mechanical ticket puncher entering from the left and punch collection dock.
  */
 export default function Portfolio({ maxItems = 3 }) {
-  const [selectedProject, setSelectedProject] = useState(null)
+  const navigate = useNavigate()
   const displayItems = projects.items.slice(0, maxItems)
+
+  const handleSelectProject = (project) => {
+    navigate(`/projects?open=${project.id}#${project.id}`)
+  }
 
   return (
     <section id="work" className="section portfolio-ticket-experience">
       {/* Scroll-Driven Pinned Ticket Stack with Puncher and Collection Tray */}
       <TicketStack
         projects={displayItems}
-        onSelectProject={(project) => setSelectedProject(project)}
+        onSelectProject={handleSelectProject}
       />
 
       {/* Post-Runway Footer with See All Work link */}
@@ -322,16 +334,6 @@ export default function Portfolio({ maxItems = 3 }) {
           </Link>
         </div>
       </div>
-
-      {/* Project Detail Modal */}
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectModal
-            project={selectedProject}
-            onClose={() => setSelectedProject(null)}
-          />
-        )}
-      </AnimatePresence>
     </section>
   )
 }

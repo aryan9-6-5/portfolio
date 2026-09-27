@@ -425,7 +425,7 @@ export const coreStrengths = {
       tag: 'VITALWATCH // MULTI-AGENT ML',
       metric: 'Llama-3.3 + 2 ML Models',
       story: "VitalWatch's agents must establish strict consensus before clinical risk stratification. Harmonizing Groq/Llama-3.3 reasoning with two distinct gradient-boosted models formed the cornerstone of its fault-tolerant pipeline.",
-      link: '/projects#vitalwatch',
+      link: '/projects?open=vitalwatch#vitalwatch',
       color: 'blue',
     },
     {
@@ -435,7 +435,7 @@ export const coreStrengths = {
       tag: 'PLATTR // SYSTEM ARCHITECTURE',
       metric: '3 Unified Ordering Engines',
       story: "Architected a unified polymorphic catalog unifying recurring tiffin subscriptions, on-demand bulk orders, and custom event catering behind a single cohesive React + Supabase backend.",
-      link: '/projects#plattr',
+      link: '/projects?open=plattr#plattr',
       color: 'yellow',
     },
     {
@@ -445,7 +445,7 @@ export const coreStrengths = {
       tag: 'NEXUSMART // ANALYTICAL LAKEHOUSE',
       metric: '31.8M+ Rows Benchmarked',
       story: "Engineered a high-performance retail analytics lakehouse using DuckDB and Polars to achieve a 10x query speedup across 31.8M+ transaction records without unnecessary cloud overhead.",
-      link: '/projects#nexusmart',
+      link: '/projects?open=nexusmart#nexusmart',
       color: 'pink',
     },
     {
@@ -465,7 +465,7 @@ export const coreStrengths = {
       tag: 'FINTRACK // CLOUD INFRASTRUCTURE',
       metric: 'AWS EC2 • Live Auth & Fraud Engine',
       story: "Engineered a production Java Spring Boot finance platform with JWT token authentication, automated fraud anomaly detection, and automated AWS EC2 containerized deployment.",
-      link: '/projects#fintrack',
+      link: '/projects?open=fintrack#fintrack',
       color: 'green',
     },
     {
