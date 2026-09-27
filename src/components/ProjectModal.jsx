@@ -190,7 +190,11 @@ export default function ProjectModal({ project, onClose }) {
       document.body.style.width = prevWidth
       document.body.style.overflow = prevOverflow
       document.documentElement.style.overflow = prevHtmlOverflow
-      window.scrollTo(0, scrollY)
+      // Restore instantly — the page never actually moved while the modal
+      // was open (body was just pinned via position:fixed), so animating
+      // this with the global `scroll-behavior: smooth` made it look like
+      // the page was scrolling all the way back up from the top.
+      window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [onClose])

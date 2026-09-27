@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { projects } from '../data/content.js'
 import { IconArrow } from './icons.jsx'
 import SlideText from './SlideText.jsx'
@@ -311,19 +311,21 @@ export function ProjectList({ items, onSelectProject, initialTargetId }) {
  * mechanical ticket puncher entering from the left and punch collection dock.
  */
 export default function Portfolio({ maxItems = 3 }) {
-  const navigate = useNavigate()
+  // "Inspect Ticket" on the homepage opens the dossier right here as an
+  // overlay — it must NOT navigate to /projects. Routing there and back
+  // was clearing the URL hash on close, which made ScrollManager reset
+  // the scroll position, so closing the dossier looked like it dropped
+  // you on a different page instead of leaving you exactly where you
+  // were on the homepage.
+  const [selectedProject, setSelectedProject] = useState(null)
   const displayItems = projects.items.slice(0, maxItems)
-
-  const handleSelectProject = (project) => {
-    navigate(`/projects?open=${project.id}#${project.id}`)
-  }
 
   return (
     <section id="work" className="section portfolio-ticket-experience">
       {/* Scroll-Driven Pinned Ticket Stack with Puncher and Collection Tray */}
       <TicketStack
         projects={displayItems}
-        onSelectProject={handleSelectProject}
+        onSelectProject={(project) => setSelectedProject(project)}
       />
 
       {/* Post-Runway Footer with See All Work link */}
@@ -334,6 +336,12 @@ export default function Portfolio({ maxItems = 3 }) {
           </Link>
         </div>
       </div>
+
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        )}
+      </AnimatePresence>
     </section>
   )
 }
