@@ -448,27 +448,6 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
 .word-inner { display: inline-block; }
 .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 
-/* Hero card spread — fanned deck of badges that opens on hover */
-.hero-card-spread-wrap {
-  position: absolute;
-  top: 150px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  display: none;
-}
-@media (min-width: 1300px) { .hero-card-spread-wrap { top: 190px; } }
-@media (min-width: 900px) { .hero-card-spread-wrap { display: block; } }
-.hero-card-spread { position: relative; width: 1px; height: 1px; }
-.hero-spread-card {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform-origin: center;
-  white-space: nowrap;
-  cursor: default;
-}
-
 .hero-doodle {
   position: absolute;
   z-index: 1;

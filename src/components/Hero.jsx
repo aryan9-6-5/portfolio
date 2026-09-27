@@ -4,7 +4,6 @@ import { hero } from '../data/content.js'
 import { IconPen, IconCup, IconSquiggle } from './icons.jsx'
 import AnimatedWords from './AnimatedWords.jsx'
 import SlideText from './SlideText.jsx'
-import HeroCardSpread from './HeroCardSpread.jsx'
 import HeroImageGrid from './HeroImageGrid.jsx'
 import HeroCloud from './HeroCloud.jsx'
 
@@ -17,10 +16,6 @@ export default function Hero() {
       <span className="hero-doodle hero-doodle-pen"><IconPen /></span>
       <span className="hero-doodle hero-doodle-cup"><IconCup /></span>
       <span className="hero-doodle hero-doodle-squiggle"><IconSquiggle /></span>
-
-      <div className="hero-card-spread-wrap">
-        <HeroCardSpread />
-      </div>
 
       <div className="hero-wrap">
 

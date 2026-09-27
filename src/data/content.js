@@ -35,8 +35,6 @@ export const hero = {
   primaryCta: { label: 'See my work', to: '/projects' },
   secondaryCta: { label: 'Get in touch', to: '/contact' },
   pose: 'standing-peace',
-  floatingLeft: { text: 'AI/ML Engineer', color: 'blue' },
-  floatingRight: { text: 'Runner-Up, Hackathon', color: 'pink' },
 }
 
 export const quickLinks = {
