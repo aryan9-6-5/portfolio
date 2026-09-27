@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import SlideText from './SlideText.jsx'
+import { IconEnvelope } from './icons.jsx'
 
 // State machine per animations.md §9C: Default -> Loading -> Success | Error,
 // plus a Disabled state. No backend exists, so "success" means the mailto
@@ -33,11 +34,13 @@ export default function SubmitButton({ state = 'idle' }) {
         ) : (
           <motion.span
             key={state}
+            className="submit-btn-inner"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
+            <IconEnvelope width={16} height={16} />
             <SlideText>{LABELS[state] || LABELS.idle}</SlideText>
           </motion.span>
         )}

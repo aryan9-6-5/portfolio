@@ -2391,7 +2391,7 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
 .contact-portrait { width: 90px; height: 90px; border-radius: 50%; overflow: hidden; margin: 0 auto 24px; border: 2px solid var(--white); }
 .contact-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(1.5); }
 .contact-cta { margin: 40px 0; }
-.contact-links { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin: 20px 0 60px; }
+.contact-links { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin: 40px 0 64px; }
 .contact-link { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .contact-link-label { font-size: 13px; color: rgba(255,255,255,0.45); }
 .contact-link-value { font-size: 16px; font-weight: 525; transition: color 0.25s var(--ease-standard); }
@@ -2402,6 +2402,57 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
 }
 .contact-rule { border: none; border-top: 1px solid rgba(255,255,255,0.15); margin: 0 0 24px; }
 .contact-footer-line { font-size: 14px; color: rgba(255,255,255,0.4); }
+
+/* Contact links as hanging luggage tags — travel motif echoing the airmail form */
+.contact-link-tag {
+  position: relative;
+  padding: 26px 26px 18px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(29,29,29,0.15);
+  color: var(--dark);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.28);
+  rotate: var(--tag-rotate, 0deg);
+  translate: 0 0;
+  scale: 1;
+  text-decoration: none;
+  transition: rotate 0.3s var(--ease-standard), translate 0.3s var(--ease-standard), scale 0.3s var(--ease-standard), box-shadow 0.3s var(--ease-standard);
+}
+.contact-link-tag:hover {
+  rotate: 0deg;
+  translate: 0 -6px;
+  scale: 1.04;
+  box-shadow: 0 20px 34px rgba(0,0,0,0.32);
+}
+.contact-link-tag.blue { background: var(--blue-soft); }
+.contact-link-tag.pink { background: var(--pink-soft); }
+.contact-link-tag.green { background: var(--green-soft); }
+.contact-link-tag .contact-link-label { color: rgba(29,29,29,0.5); }
+.contact-link-tag .contact-link-value { color: var(--dark); }
+.contact-link-tag .contact-link-value:hover {
+  color: var(--dark);
+  text-decoration-color: var(--dark);
+}
+.contact-tag-hole {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: var(--dark);
+  border: 2px solid rgba(255,255,255,0.85);
+}
+.contact-tag-hole::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,0.35);
+  margin-left: -0.5px;
+}
 
 .contact-cta-wrap { position: relative; display: inline-flex; }
 .contact-cta-hand {
@@ -2421,12 +2472,57 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
 @media (min-width: 700px) { .contact-cta-hand { display: block; } }
 .contact-cta-hand svg { display: block; margin-bottom: 4px; }
 
-/* ---- Contact form ---- */
+/* ---- Contact form: styled as an airmail envelope ---- */
 .contact-form-section { background: var(--purple-soft); }
-.contact-form {
+.airmail-card {
+  position: relative;
   max-width: 700px;
   margin: 0 auto;
-  padding: 50px 40px;
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius-card);
+}
+.airmail-edge {
+  height: 9px;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  background: repeating-linear-gradient(
+    135deg,
+    #D9534F 0 12px,
+    #ffffff 12px 18px,
+    #3B5BDB 18px 30px,
+    #ffffff 30px 36px
+  );
+}
+.airmail-edge-sm {
+  width: 130px;
+  height: 7px;
+  margin: 0 auto 28px;
+  border-radius: 999px;
+}
+.airmail-stamp {
+  position: absolute;
+  top: 26px;
+  right: 32px;
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dark);
+  background: var(--blue-soft);
+  border: 1.5px dashed rgba(29,29,29,0.4);
+  border-radius: 6px;
+  transform: rotate(-8deg);
+}
+.airmail-to {
+  font-family: var(--font-hand);
+  font-size: 22px;
+  color: rgba(29,29,29,0.65);
+  transform: rotate(-1deg);
+  margin-bottom: -2px;
+}
+.contact-form {
+  padding: 40px 40px 50px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -2452,10 +2548,32 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   box-shadow: 0 0 0 3px rgba(29,29,29,0.1);
 }
 
+.submit-btn-wrap { position: relative; align-self: flex-start; display: inline-flex; }
 .submit-btn { align-self: flex-start; min-width: 190px; justify-content: center; transition: background 0.5s var(--ease-standard); }
+.submit-btn-inner { display: inline-flex; align-items: center; gap: 8px; }
 .submit-btn.success { background: var(--green-soft); }
 .submit-btn.error { color: var(--dark); }
 .submit-btn.loading, .submit-btn.disabled { opacity: 0.6; cursor: default; }
+
+.postmark-stamp {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  margin-left: -44px;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 2px solid var(--dark);
+  background: rgba(255,255,255,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+}
+.postmark-ring { position: absolute; inset: 6px; border: 1px dashed rgba(29,29,29,0.45); border-radius: 50%; }
+.postmark-text { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--dark); }
+.postmark-text strong { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
 .submit-spinner {
   display: inline-block;
   width: 18px;
