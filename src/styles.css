@@ -372,8 +372,124 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
 @media (min-width: 810px) { .hero { padding: 220px var(--gutter) 120px; } }
 @media (min-width: 1300px) { .hero { padding: 280px var(--gutter) 160px; } }
 
-.hero-wrap { max-width: 750px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; position: relative; z-index: 2; }
-.hero-headline { text-align: center; }
+.hero-wrap { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; position: relative; z-index: 2; }
+.hero-headline { 
+  text-align: center; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.hero-headline-top { 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.hero-headline-bottom { 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dynamic Hero Role & Translucent Yellow Highlighter Sweep */
+.hero-role-block {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.hero-role-article {
+  display: inline-block;
+  font-weight: 500;
+  margin-right: 0.16em;
+}
+
+.hero-role-tag-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.16em;
+  margin: 0 -0.04em;
+  vertical-align: baseline;
+  border-radius: 6px;
+}
+
+.hero-role-text {
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+  display: inline-block;
+  color: var(--dark);
+  letter-spacing: -0.03em;
+}
+
+/* Dynamic Hero Role & Almost Transparent #fcd703 Glass Acrylic Cover */
+.hero-role-acrylic-cover {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  left: -8px;
+  right: -8px;
+  background: linear-gradient(
+    135deg,
+    rgba(252, 215, 3, 0.22) 0%,
+    rgba(252, 215, 3, 0.12) 50%,
+    rgba(252, 215, 3, 0.18) 100%
+  );
+  backdrop-filter: blur(1.5px) saturate(190%);
+  -webkit-backdrop-filter: blur(1.5px) saturate(190%);
+  border-radius: 9px;
+  border: 2px dotted #1D1D1D; /* Crisp dark dotted border matching brand stroke */
+  box-shadow: 
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -1.5px 2px rgba(210, 165, 0, 0.18),
+    inset 1px 0 1.5px rgba(255, 255, 255, 0.45),
+    0 4px 12px rgba(252, 215, 3, 0.15),
+    0 2px 4px rgba(29, 29, 29, 0.05);
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: transform;
+}
+
+/* Specular reflection streak across the glass surface */
+.hero-role-cover-gloss {
+  position: absolute;
+  top: 1.5px;
+  left: 5px;
+  right: 5px;
+  height: 42%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.1) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border-radius: 6px 6px 12px 12px;
+  pointer-events: none;
+}
+
+@media (max-width: 809px) {
+  .hero-headline {
+    gap: 4px;
+  }
+  .hero-role-acrylic-cover {
+    top: -3px;
+    bottom: -3px;
+    left: -6px;
+    right: -6px;
+    border-radius: 7px;
+    border-width: 1.8px;
+  }
+  .hero-role-cover-gloss {
+    left: 4px;
+    right: 4px;
+    height: 40%;
+  }
+}
+
 .hero-avatar {
   width: 1.8em;
   height: 1.8em;
@@ -2636,6 +2752,7 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overscroll-behavior: contain;
 }
 
 .project-modal-overlay {
@@ -2644,6 +2761,7 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   background: rgba(15, 23, 42, 0.72);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  touch-action: none;
 }
 
 .project-modal-card {
@@ -2717,6 +2835,7 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+  padding-right: 48px; /* Dedicated clearance for the top-right close button */
 }
 
 .modal-badge-category {
@@ -5079,24 +5198,159 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   .site-footer-legal { font-size: 12px; margin-top: 14px; padding-top: 12px; }
 
   /* --- Project Modal (Mobile) --- */
-  .project-modal-container { padding: 12px; }
-  .project-modal-card { max-height: 92vh; border-radius: 18px; border-width: 2px; }
-  .modal-hero-banner { padding: 18px 16px; }
-  .modal-hero-title { font-size: 22px; }
-  .modal-hero-tagline { font-size: 14px; }
-  .modal-metrics-bar { gap: 8px; }
-  .modal-metric-chip { padding: 6px 12px; }
-  .metric-val { font-size: 15px; }
-  .modal-tabs-bar { padding: 0 12px; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .modal-tab-btn { padding: 10px 12px; font-size: 12px; white-space: nowrap; }
-  .modal-scroll-body { padding: 16px; }
-  .modal-arch-grid { grid-template-columns: 1fr; }
-  .modal-footer-bar { padding: 12px 16px; }
-  .modal-action-btn { padding: 8px 14px; font-size: 12px; }
-  .modal-close-btn { top: 12px; right: 12px; width: 34px; height: 34px; }
-  .modal-ticket-notch { width: 20px; height: 20px; bottom: -10px; }
-  .modal-ticket-notch.notch-left { left: -10px; }
-  .modal-ticket-notch.notch-right { right: -10px; }
+  .project-modal-container { 
+    padding: 12px 10px; 
+    overscroll-behavior: contain; 
+  }
+  .project-modal-card { 
+    height: 90vh;
+    max-height: 90vh; 
+    border-radius: 18px; 
+    border-width: 2px; 
+    display: flex;
+    flex-direction: column;
+  }
+  .project-modal-close-btn { 
+    top: 10px; 
+    right: 10px; 
+    width: 32px; 
+    height: 32px; 
+  }
+  .modal-hero-banner { 
+    padding: 14px 14px 10px; 
+    flex-shrink: 0;
+  }
+  .modal-meta-row { 
+    gap: 6px; 
+    margin-bottom: 6px; 
+    padding-right: 36px; /* Clearance for close button */
+  }
+  .modal-badge-category { 
+    padding: 3px 8px; 
+    font-size: 9.5px; 
+    font-weight: 700; 
+  }
+  .modal-badge-admit { 
+    font-size: 9.5px; 
+  }
+  .modal-badge-code { 
+    font-size: 9.5px; 
+    padding: 2px 5px; 
+  }
+  .modal-hero-title { 
+    font-size: 20px; 
+    line-height: 1.2; 
+    margin: 0 0 4px; 
+  }
+  .modal-hero-tagline { 
+    font-size: 12.5px; 
+    line-height: 1.4; 
+    margin: 0 0 10px; 
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .modal-metrics-bar { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 6px; 
+  }
+  .modal-metric-chip { 
+    padding: 5px 4px; 
+    border-radius: 9px; 
+    text-align: center; 
+    align-items: center; 
+    justify-content: center; 
+  }
+  .metric-val { 
+    font-size: 12.5px; 
+    font-weight: 800; 
+    line-height: 1.15; 
+  }
+  .metric-lbl { 
+    font-size: 8px; 
+    letter-spacing: 0.03em; 
+    line-height: 1.15; 
+    text-align: center; 
+  }
+  .modal-tabs-bar { 
+    padding: 0 8px; 
+    gap: 2px; 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; 
+    scrollbar-width: none; 
+    flex-shrink: 0;
+  }
+  .modal-tab-btn { 
+    padding: 9px 8px; 
+    font-size: 11.5px; 
+    white-space: nowrap; 
+    flex-shrink: 0; 
+  }
+  .modal-scroll-body { 
+    padding: 14px 14px 18px; 
+    overscroll-behavior: contain; 
+    -webkit-overflow-scrolling: touch; 
+    flex: 1;
+    overflow-y: auto;
+  }
+  .modal-section-title { 
+    font-size: 15px; 
+    line-height: 1.35; 
+    margin-bottom: 8px; 
+  }
+  .modal-subsection-title { 
+    font-size: 11px; 
+    margin: 14px 0 6px; 
+  }
+  .modal-body-paragraph { 
+    font-size: 13.5px; 
+    line-height: 1.6; 
+  }
+  .modal-challenge-box { 
+    padding: 12px 12px; 
+    border-radius: 12px; 
+    margin-top: 6px; 
+  }
+  .modal-arch-grid { 
+    grid-template-columns: 1fr; 
+    gap: 8px; 
+  }
+  .modal-arch-card { 
+    padding: 10px 12px; 
+    border-radius: 10px; 
+  }
+  .arch-label { 
+    font-size: 12px; 
+  }
+  .arch-desc { 
+    font-size: 12px; 
+    line-height: 1.45; 
+  }
+  .modal-footer-bar { 
+    padding: 10px 14px; 
+    flex-shrink: 0;
+    background: #FFFFFF;
+    border-top: 1.5px solid #E2E8F0;
+  }
+  .modal-footer-links {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .modal-action-btn { 
+    padding: 7px 12px; 
+    font-size: 11.5px; 
+  }
+  .modal-ticket-notch { 
+    width: 18px; 
+    height: 18px; 
+    bottom: -9px; 
+  }
+  .modal-ticket-notch.notch-left { left: -9px; }
+  .modal-ticket-notch.notch-right { right: -9px; }
 
   /* --- Quick Links Section --- */
   .ql-grid { gap: 16px; }

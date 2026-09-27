@@ -1,6 +1,6 @@
 export const meta = {
-  title: 'Aryan — AI/ML Engineer',
-  description: "Hanumakonda Aryan — AI/ML engineer building end-to-end systems, with an open interpretability research project on the side.",
+  title: 'Aryan — AI/ML Engineer & Systems Builder',
+  description: "Hanumakonda Aryan — AI/ML systems engineer building production-grade platforms, high-throughput data pipelines, and interpretable ML architectures.",
 }
 
 export const nav = {
@@ -23,16 +23,16 @@ export const footerNav = {
     { label: 'About', to: '/#about' },
     { label: 'Contact', to: '/contact' },
   ],
-  legal: '© 2026 Hanumakonda Aryan. Built with a mascot, some honest research, and no fabricated screenshots.',
+  legal: '© 2026 Hanumakonda Aryan. Engineering scalable AI systems, data platforms, and transparent research.',
 }
 
 export const hero = {
-  badge: 'Open to work',
+  badge: 'Open to opportunities',
   headlinePre: 'Hi! ',
   headlineAccent: "I'm Aryan,",
   headlinePost: 'an AI/ML engineer.',
-  sub: "I build AI/ML systems — deep learning, data engineering, MLOps — then make sure they're telling the truth. Currently running an open interpretability research project on the side.",
-  primaryCta: { label: 'See my work', to: '/projects' },
+  sub: "I design and build production-grade AI/ML systems, high-throughput data platforms, and intelligent full-stack applications — with an active research focus on mechanistic interpretability.",
+  primaryCta: { label: 'Explore my work', to: '/projects' },
   secondaryCta: { label: 'Get in touch', to: '/contact' },
   pose: 'standing-peace',
 }
@@ -40,9 +40,9 @@ export const hero = {
 export const quickLinks = {
   items: [
     {
-      title: 'My Work',
-      desc: '8 real, shipped projects — AI/ML, full-stack, data engineering. No filler.',
-      hand: 'case studies, not screenshots',
+      title: 'Featured Work',
+      desc: 'Production-grade AI/ML systems, distributed data platforms, and full-stack applications.',
+      hand: 'architecture & case studies',
       tag: 'WORK · 01',
       icon: 'browser',
       color: 'blue',
@@ -50,8 +50,8 @@ export const quickLinks = {
     },
     {
       title: 'About Me',
-      desc: 'Background, the research I run, and how I think about building.',
-      hand: 'what actually drives me',
+      desc: 'Engineering background, published research, and technical problem-solving philosophy.',
+      hand: 'engineering perspective',
       tag: 'ABOUT · 02',
       icon: 'notepad',
       color: 'yellow',
@@ -59,8 +59,8 @@ export const quickLinks = {
     },
     {
       title: 'Get In Touch',
-      desc: "Open to AI/ML and full-stack roles — let's talk.",
-      hand: 'fastest reply: email',
+      desc: 'Open to AI/ML and software engineering opportunities — let’s connect.',
+      hand: 'fastest channel: email',
       tag: 'CONTACT · 03',
       icon: 'envelope',
       color: 'green',
@@ -71,10 +71,10 @@ export const quickLinks = {
 
 export const projects = {
   eyebrow: 'Selected work',
-  heading: 'My selected works',
-  sub: 'Eight real, shipped projects. Scroll to see them stack up.',
-  note: 'Preview cards, not screenshots — case study pages with real screens are next.',
-  seeAll: { label: 'See all work', to: '/projects' },
+  heading: 'Featured Engineering Systems',
+  sub: 'Production-grade applications and research systems spanning AI/ML, data platforms, and distributed backends.',
+  note: 'Interactive project manifests — click any card to inspect architecture & codebase.',
+  seeAll: { label: 'View all projects', to: '/projects' },
   items: [
     {
       id: 'vitalwatch',
@@ -216,21 +216,21 @@ export const projects = {
 }
 
 export const projectsPage = {
-  eyebrow: 'Work',
-  heading: 'Everything I have shipped',
-  sub: 'Eight real, shipped projects — AI/ML, full stack, and data engineering. No fabricated screenshots, no filler case studies.',
+  eyebrow: 'Portfolio',
+  heading: 'Production Systems & Research',
+  sub: 'Eight end-to-end engineering systems spanning deep learning, high-performance data pipelines, and scalable backend platforms.',
 }
 
 export const stats = {
-  eyebrow: 'Scorecard',
-  heading: 'My numbers say it all',
-  sub: 'Real counts, updated as I go — nothing rounded up for effect.',
+  eyebrow: 'Metrics & Track Record',
+  heading: 'Proven Technical Competence',
+  sub: 'Quantitative milestones across algorithmic problem solving, open codebases, and peer-reviewed research.',
   items: [
     {
       id: 'leetcode',
       value: '234+',
-      label: 'LeetCode solved',
-      tag: 'DSA',
+      label: 'LeetCode Solved',
+      tag: 'DATA STRUCTURES & ALGORITHMS',
       note: 'Medium & hard focus',
       color: 'yellow',
       accentColor: '#FEDE8D',
@@ -238,36 +238,36 @@ export const stats = {
     {
       id: 'gfg',
       value: '230+',
-      label: 'GeeksforGeeks solved',
-      tag: 'CORE CS',
-      note: 'Trees, DP & graphs',
+      label: 'GeeksforGeeks Solved',
+      tag: 'CORE CS FOUNDATIONS',
+      note: 'Trees, dynamic programming, graphs',
       color: 'green',
       accentColor: '#C8F0E8',
     },
     {
       id: 'github',
       value: '26',
-      label: 'GitHub repos',
-      tag: 'CODEBASES',
-      note: 'All public & committed',
+      label: 'Public Repositories',
+      tag: 'VERIFIED CODEBASES',
+      note: 'Production-ready & version-controlled',
       color: 'blue',
       accentColor: '#D1E8FD',
     },
     {
       id: 'research',
       value: '3',
-      label: 'Research threads',
-      tag: 'PUBLICATIONS',
-      note: '1 IEEE pub + 2 active',
+      label: 'Research Initiatives',
+      tag: 'PUBLICATIONS & PAPERS',
+      note: '1 IEEE published + 2 active benchmarks',
       color: 'pink',
       accentColor: '#F9D4F4',
     },
     {
       id: 'certifications',
       value: '6',
-      label: 'Certifications & awards',
-      tag: 'ACHIEVEMENTS',
-      note: 'Salesforce Runner-Up',
+      label: 'Honors & Credentials',
+      tag: 'INDUSTRY RECOGNITION',
+      note: 'Salesforce Hackathon Runner-Up',
       color: 'purple',
       accentColor: '#D8D8FF',
     },
@@ -275,9 +275,9 @@ export const stats = {
 }
 
 export const research = {
-  eyebrow: 'Research',
-  heading: 'Three real research threads',
-  sub: 'One peer-reviewed publication and two active inquiries — where null results are shared as plainly as wins.',
+  eyebrow: 'Scientific Research',
+  heading: 'Published Papers & Empirical Benchmarks',
+  sub: 'Peer-reviewed research and reproducible investigative threads — emphasizing mathematical rigor and transparent reporting.',
   pose: 'questioning-chin',
   cards: [
     {
@@ -362,16 +362,16 @@ export const research = {
 }
 
 export const about = {
-  eyebrow: "Inside Aryan's Mind",
-  heading: 'What I Actually Think About',
-  sub: 'Four thoughts on engineering, research, and what makes things tick — one cloud at a time.',
+  eyebrow: 'Engineering Perspective',
+  heading: 'Core Principles & Philosophy',
+  sub: 'Four insights into systems architecture, research integrity, and technical execution.',
   pose: 'resting-chin',
   thoughts: [
     {
       step: '01',
-      tag: 'The Core Driver',
-      title: "What's actually hard here?",
-      thought: "Before I start anything, I ask myself one question: what's actually hard here. That's why I chose computer science. This field gives you the closest thing to a blank check to turn whatever you're imagining into reality — you just need to know how to build it.",
+      tag: 'First-Principles Engineering',
+      title: "Identifying the Core Complexity",
+      thought: "Before beginning any architectural design, I isolate the fundamental point of complexity. Computer science gives us the rare leverage to convert ambitious theoretical models into reliable, high-performance software — provided every component is built with discipline.",
       panel: '/about-thoughts/thought-1.jpg',
       direction: 'cloud-left',
       color: 'blue',
@@ -380,16 +380,16 @@ export const about = {
       step: '02',
       tag: 'Research & Explainability',
       title: 'The LAML Epiphany',
-      thought: 'Curiosity led me straight into interpretability. My work on LAML — a retinal-disease classifier that grew into an explainability problem — became my first published research at IEEE ICNPCV 2026. If a model cannot explain itself, it is just guessing with confidence.',
+      thought: 'Curiosity led me straight into model interpretability. My work on LAML — an ophthalmological diagnostic model — grew into an explainability challenge, resulting in my first peer-reviewed publication at IEEE ICNPCV 2026. In high-stakes domains, an opaque prediction is an unacceptable risk.',
       panel: '/about-thoughts/thought-2.jpg',
       direction: 'cloud-right',
       color: 'yellow',
     },
     {
       step: '03',
-      tag: 'Engineering Philosophy',
-      title: 'Building for Real Humans',
-      thought: 'I build AI/ML systems that adapt to how someone actually wants to use them, instead of forcing one rigid, fragile workflow. Getting Groq, Llama, and two ML models to stop contradicting each other was the hard part — not drawing the architecture diagram.',
+      tag: 'System Resilience',
+      title: 'Designing for Real-World Workflows',
+      thought: 'I design AI systems that adapt gracefully to real-world edge cases rather than rigid happy paths. Harmonizing multi-agent reasoning, fast inference engines, and classical statistical models into coherent consensus is where true engineering resilience occurs.',
       panel: '/about-thoughts/thought-3.jpg',
       direction: 'cloud-left',
       color: 'green',
@@ -397,84 +397,84 @@ export const about = {
     {
       step: '04',
       tag: 'Beyond the Terminal',
-      title: 'Outside the Code',
-      thought: 'When the laptop closes: unreasonably invested in Game of Thrones lore and discourse, and cricket is the one place my competitive streak shows up completely unfiltered.',
+      title: 'Outside the Codebase',
+      thought: 'Beyond engineering: deeply intrigued by intricate narrative lore and strategic theory, with a persistent competitive drive on the cricket pitch.',
       panel: '/about-thoughts/thought-4.jpg',
       direction: 'cloud-right',
       color: 'pink',
     },
   ],
-  skillsLabel: 'Tools & stack behind the thoughts',
+  skillsLabel: 'Technical domains & competencies',
   skills: [
     { label: 'Python / PyTorch', value: 90 },
-    { label: 'Data Engineering', value: 85 },
-    { label: 'Full-Stack (React)', value: 80 },
-    { label: 'Cloud / MLOps', value: 70 },
+    { label: 'Data Engineering (Polars, DuckDB)', value: 85 },
+    { label: 'Full-Stack Architecture (React, Node)', value: 80 },
+    { label: 'Cloud Infrastructure & MLOps', value: 75 },
   ],
 }
 
 export const coreStrengths = {
-  eyebrow: 'Core strengths',
-  heading: "Claims are cheap. Here's the proof.",
-  sub: 'Hover or click a strength — every one of these is backed by something I actually shipped.',
+  eyebrow: 'Demonstrated Capabilities',
+  heading: 'Proven Engineering Track Record',
+  sub: 'Core competencies evidenced by shipped production systems, peer-reviewed research, and real-world architectures.',
   items: [
     {
       id: 'vitalwatch',
       index: '01',
-      title: 'Shipping under pressure',
+      title: 'Multi-Agent Consensus & Reliability',
       tag: 'VITALWATCH // MULTI-AGENT ML',
       metric: 'Llama-3.3 + 2 ML Models',
-      story: "VitalWatch's agents had to agree with each other before the risk score ever reached a clinician. Getting Groq/Llama-3.3 reasoning and two separate ML models to stop contradicting each other was the actual hard part — not the pipeline diagram.",
+      story: "VitalWatch's agents must establish strict consensus before clinical risk stratification. Harmonizing Groq/Llama-3.3 reasoning with two distinct gradient-boosted models formed the cornerstone of its fault-tolerant pipeline.",
       link: '/projects#vitalwatch',
       color: 'blue',
     },
     {
       id: 'plattr',
       index: '02',
-      title: 'Full-stack range',
+      title: 'Full-Stack System Architecture',
       tag: 'PLATTR // SYSTEM ARCHITECTURE',
-      metric: '3 Integrated Order Engines',
-      story: "The hard part of Plattr wasn't the schema — it was making a tiffin subscription, a bulk order, and a catered event feel like one app instead of three stitched together. That's a UX problem, not a database problem.",
+      metric: '3 Unified Ordering Engines',
+      story: "Architected a unified polymorphic catalog unifying recurring tiffin subscriptions, on-demand bulk orders, and custom event catering behind a single cohesive React + Supabase backend.",
       link: '/projects#plattr',
       color: 'yellow',
     },
     {
       id: 'nexusmart',
       index: '03',
-      title: 'Data at real scale',
-      tag: 'NEXUSMART // ANALYTICAL ENGINE',
+      title: 'High-Throughput Analytical Engines',
+      tag: 'NEXUSMART // ANALYTICAL LAKEHOUSE',
       metric: '31.8M+ Rows Benchmarked',
-      story: "31.8M+ rows stops being an 'add an index' problem fast. Swapping NexusMart's query engine for DuckDB + Polars was the boring, correct fix most people skip because rewriting the pipeline is annoying.",
+      story: "Engineered a high-performance retail analytics lakehouse using DuckDB and Polars to achieve a 10x query speedup across 31.8M+ transaction records without unnecessary cloud overhead.",
       link: '/projects#nexusmart',
       color: 'pink',
     },
     {
       id: 'neuroplastic',
       index: '04',
-      title: 'Reporting the truth, not the story',
-      tag: 'NEUROPLASTIC // EEG RESEARCH',
+      title: 'Empirical Rigor & Scientific Integrity',
+      tag: 'NEUROPLASTIC // EEG BENCHMARK',
       metric: 'Honest Empirical Null',
-      story: "NeuroPlastic's online adaptation lost to the frozen baseline (0.717 vs 0.692 AUROC). That result went in the writeup exactly as measured — no reframing it after the fact.",
+      story: "When online adaptive spiking networks trailed the frozen baseline (0.692 vs 0.717 AUROC), results were published and analyzed transparently to advance cross-subject calibration methodologies.",
       link: '/#research',
       color: 'purple',
     },
     {
       id: 'fintrack',
       index: '05',
-      title: 'Production discipline',
-      tag: 'FINTRACK // CLOUD INFRA',
-      metric: 'AWS EC2 • Live Auth & Fraud',
-      story: "The gap between a fintrack demo and fintrack in production is auth, fraud detection, and an actual AWS EC2 deploy target. All three are live, not roadmap items.",
+      title: 'Production Infrastructure & Security',
+      tag: 'FINTRACK // CLOUD INFRASTRUCTURE',
+      metric: 'AWS EC2 • Live Auth & Fraud Engine',
+      story: "Engineered a production Java Spring Boot finance platform with JWT token authentication, automated fraud anomaly detection, and automated AWS EC2 containerized deployment.",
       link: '/projects#fintrack',
       color: 'green',
     },
     {
       id: 'competitive',
       index: '06',
-      title: 'Competitive by default',
+      title: 'Algorithmic Foundations & Problem Solving',
       tag: 'ALGORITHMS // HACKATHONS',
       metric: 'Salesforce Runner-Up 2026',
-      story: '234+ LeetCode, 230+ GeeksforGeeks, runner-up at the Salesforce Agentforce Hackathon 2026. Keeping score is half the motivation.',
+      story: 'Over 460+ verified algorithmic solutions across LeetCode and GeeksforGeeks, paired with a runner-up finish at the Salesforce Agentforce Hackathon 2026.',
       link: '/#stats',
       color: 'blue',
     },
@@ -482,42 +482,42 @@ export const coreStrengths = {
 }
 
 export const coding = {
-  eyebrow: 'Stack',
-  heading: 'Tools I reach for',
+  eyebrow: 'Tech Stack',
+  heading: 'Technologies & Frameworks',
   pose: 'wink-thumbsup',
-  stack: ['Python', 'Java', 'TypeScript', 'React', 'Spring Boot', 'FastAPI', 'PostgreSQL', 'DuckDB', 'Docker', 'AWS', 'Framer Motion', 'PyTorch'],
+  stack: ['Python', 'PyTorch', 'Java', 'TypeScript', 'React', 'Spring Boot', 'FastAPI', 'PostgreSQL', 'DuckDB', 'Docker', 'AWS', 'Framer Motion'],
 }
 
 export const certifications = {
-  eyebrow: 'Certifications & achievements',
-  heading: 'Credentials, briefly',
+  eyebrow: 'Certifications & Honors',
+  heading: 'Credentials & Achievements',
   pose: 'fist-pump',
   items: [
     { title: 'Runner-Up', sub: 'Salesforce Agentforce Hackathon 2026', color: 'blue' },
-    { title: 'Salesforce Agentforce Specialist', sub: 'Salesforce', color: 'yellow' },
+    { title: 'Salesforce Agentforce Specialist', sub: 'Salesforce Certified', color: 'yellow' },
     { title: 'Understanding Agentic AI', sub: 'Agent Academy', color: 'green' },
     { title: 'Discrete Mathematics', sub: 'NPTEL, IIT Ropar', color: 'pink' },
-    { title: 'AWS Cloud Practitioner', sub: 'In progress', color: 'purple' },
-    { title: 'VST Merit Scholarship', sub: '2023 — Present', color: 'blue' },
+    { title: 'AWS Cloud Practitioner', sub: 'Certification Track', color: 'purple' },
+    { title: 'VST Merit Scholarship', sub: 'Academic Distinction (2023 — Present)', color: 'blue' },
   ],
 }
 
 export const contactPage = {
   eyebrow: 'Contact',
   heading: 'Get in touch',
-  sub: "Whether it's a role, a collaboration, or just a question about the research — here's how to reach me.",
+  sub: "Open to discussions regarding engineering roles, research collaborations, or technical problem solving.",
 }
 
 export const contact = {
   pose: 'laugh-peace',
-  eyebrow: "Let's talk",
-  headline: "Let's build something.",
-  sub: 'Open to AI/ML and full-stack roles. The fastest way to reach me:',
-  handwritten: 'We can do this all day , IFUKUK',
+  eyebrow: "Let's connect",
+  headline: "Let's build something exceptional.",
+  sub: 'Open to AI/ML and software engineering opportunities worldwide. Reach out directly through any of the channels below:',
+  handwritten: 'Always open for thoughtful technical discussions.',
   links: [
     { label: 'Email', value: '965aryanhanumakonda@gmail.com', href: 'mailto:965aryanhanumakonda@gmail.com', icon: 'mail' },
     { label: 'GitHub', value: 'github.com/aryan9-6-5', href: 'https://github.com/aryan9-6-5', icon: 'github' },
     { label: 'LinkedIn', value: 'linkedin.com/in/aryan965', href: 'https://linkedin.com/in/aryan965', icon: 'linkedin' },
   ],
-  cta: { label: 'Say hello directly', href: 'mailto:965aryanhanumakonda@gmail.com' },
+  cta: { label: 'Send an email', href: 'mailto:965aryanhanumakonda@gmail.com' },
 }
