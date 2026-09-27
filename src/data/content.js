@@ -41,7 +41,9 @@ export const quickLinks = {
   items: [
     {
       title: 'My Work',
-      desc: 'Four real, shipped projects — case studies, not screenshots.',
+      desc: '8 real, shipped projects — AI/ML, full-stack, data engineering. No filler.',
+      hand: 'case studies, not screenshots',
+      tag: 'WORK · 01',
       icon: 'browser',
       color: 'blue',
       to: '/projects',
@@ -49,6 +51,8 @@ export const quickLinks = {
     {
       title: 'About Me',
       desc: 'Background, the research I run, and how I think about building.',
+      hand: 'what actually drives me',
+      tag: 'ABOUT · 02',
       icon: 'notepad',
       color: 'yellow',
       to: '/#about',
@@ -56,6 +60,8 @@ export const quickLinks = {
     {
       title: 'Get In Touch',
       desc: "Open to AI/ML and full-stack roles — let's talk.",
+      hand: 'fastest reply: email',
+      tag: 'CONTACT · 03',
       icon: 'envelope',
       color: 'green',
       to: '/contact',

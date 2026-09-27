@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { useScroll, useSpring, motion } from 'framer-motion'
 import Nav from './components/Nav.jsx'
 import Footer from './components/Footer.jsx'
+import CustomCursor from './components/CustomCursor.jsx'
 import ScrollManager from './components/ScrollManager.jsx'
 import Home from './pages/Home.jsx'
 import ProjectsPage from './pages/ProjectsPage.jsx'
@@ -32,6 +33,7 @@ function CursorGlow() {
 export default function App() {
   return (
     <>
+      <CustomCursor />
       <ScrollProgress />
       <CursorGlow />
       <ScrollManager />
