@@ -4,11 +4,23 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 // Full-hero interactive image/color grid
 // Tiles near the cursor magnify, brighten, and gently shift; tiles further away settle back.
 // Generates enough rows & columns to completely cover the entire hero section on all viewports.
-const SHADES = [
-  '#E3F2FF', '#C7D9FC', '#A9C2FB', '#8CAAF5',
-  '#BFD3FA', '#6F92EE', '#D6E4FD', '#5A82E0',
-  '#B2CEFA', '#7FA2F0', '#CFDFFC', '#4D78DE'
-]
+const PALETTES = {
+  blue: [
+    '#E3F2FF', '#C7D9FC', '#A9C2FB', '#8CAAF5',
+    '#BFD3FA', '#6F92EE', '#D6E4FD', '#5A82E0',
+    '#B2CEFA', '#7FA2F0', '#CFDFFC', '#4D78DE'
+  ],
+  emerald: [
+    '#E6FDF4', '#CCFBEF', '#A7F3D0', '#6EE7B7',
+    '#99F6E4', '#34D399', '#D1FAE5', '#10B981',
+    '#5EEAD4', '#2DD4BF', '#BBF7D0', '#059669'
+  ],
+  purple: [
+    '#F5F3FF', '#EDE9FE', '#DDD6FE', '#C4B5FD',
+    '#E0E7FF', '#A78BFA', '#EEF2FF', '#8B5CF6',
+    '#C7D2FE', '#818CF8', '#E9D5FF', '#7C3AED'
+  ],
+}
 const RADIUS = 220
 const PUSH = 14
 
@@ -40,7 +52,7 @@ function Tile({ tileData, index, registerRef }) {
   )
 }
 
-export default function HeroImageGrid() {
+export default function HeroImageGrid({ theme = 'blue' }) {
   const containerRef = useRef(null)
   const entriesRef = useRef([])
   const centersRef = useRef([])
@@ -56,19 +68,21 @@ export default function HeroImageGrid() {
     return cols * rows
   })
 
+  const shades = PALETTES[theme] || PALETTES.blue
+
   // Organically and randomly arrange the tiles
   const tiles = useMemo(() => {
-    let seed = 42
+    let seed = theme === 'emerald' ? 777 : theme === 'purple' ? 999 : 42
     function rnd() {
       seed = (seed * 9301 + 49297) % 233280
       return seed / 233280
     }
     return Array.from({ length: tileCount }, () => ({
-      shade: SHADES[Math.floor(rnd() * SHADES.length)],
+      shade: shades[Math.floor(rnd() * shades.length)],
       rotate: (rnd() - 0.5) * 4,
       borderRadius: Math.floor(rnd() * 6) + 4,
     }))
-  }, [tileCount])
+  }, [tileCount, shades, theme])
 
   function registerRef(index, el, scale, bright, offsetX, offsetY) {
     if (!el) {

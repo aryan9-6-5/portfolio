@@ -1,4 +1,7 @@
-export default function HeroCloud() {
+export default function HeroCloud({ theme = 'blue' }) {
+  const shadowColor = theme === 'emerald' ? '#059669' : theme === 'purple' ? '#7C3AED' : '#0a52f0'
+  const filterId = `cloud-ambient-${theme}`
+
   return (
     <div className="hero-cloud-wrapper" aria-hidden="true">
       <svg
@@ -8,12 +11,12 @@ export default function HeroCloud() {
         className="hero-cloud-svg"
       >
         <defs>
-          <filter id="cloud-ambient" x="-10%" y="-10%" width="120%" height="130%">
-            <feDropShadow dx="0" dy="24" stdDeviation="30" floodColor="#0a52f0" floodOpacity="0.16" />
+          <filter id={filterId} x="-10%" y="-10%" width="120%" height="130%">
+            <feDropShadow dx="0" dy="24" stdDeviation="30" floodColor={shadowColor} floodOpacity="0.16" />
             <feDropShadow dx="0" dy="6" stdDeviation="12" floodColor="#1d1d1d" floodOpacity="0.04" />
           </filter>
         </defs>
-        <g filter="url(#cloud-ambient)" fill="#FFFFFF">
+        <g filter={`url(#${filterId})`} fill="#FFFFFF">
           {/* Main solid core */}
           <rect x="220" y="190" width="760" height="320" rx="160" />
           <ellipse cx="600" cy="350" rx="400" ry="190" />

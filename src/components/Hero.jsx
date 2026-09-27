@@ -31,8 +31,9 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', duration: 0.8, bounce: 0.3, delay: 0.25 }}
+            whileHover={{ scale: 1.15, rotate: 6 }}
           >
-            <img src={`/mascot/${hero.pose}.png`} alt="Aryan mascot" />
+            <img src="/mascot/hero-avatar.png" alt="Aryan avatar" />
           </motion.span>
           <AnimatedWords text={`${hero.headlineAccent} ${hero.headlinePost}`} delayChildren={0.32} />
         </h1>

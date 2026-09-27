@@ -150,15 +150,55 @@ export const projectsPage = {
 }
 
 export const stats = {
-  eyebrow: 'By the numbers',
+  eyebrow: 'Scorecard',
   heading: 'My numbers say it all',
   sub: 'Real counts, updated as I go — nothing rounded up for effect.',
   items: [
-    { value: '234+', label: 'LeetCode solved', color: 'pink' },
-    { value: '230+', label: 'GeeksforGeeks solved', color: 'purple' },
-    { value: '26', label: 'GitHub repos', color: 'blue' },
-    { value: '3', label: 'Research threads', color: 'green' },
-    { value: '6', label: 'Certifications & awards', color: 'yellow' },
+    {
+      id: 'leetcode',
+      value: '234+',
+      label: 'LeetCode solved',
+      tag: 'DSA',
+      note: 'Medium & hard focus',
+      color: 'yellow',
+      accentColor: '#FEDE8D',
+    },
+    {
+      id: 'gfg',
+      value: '230+',
+      label: 'GeeksforGeeks solved',
+      tag: 'CORE CS',
+      note: 'Trees, DP & graphs',
+      color: 'green',
+      accentColor: '#C8F0E8',
+    },
+    {
+      id: 'github',
+      value: '26',
+      label: 'GitHub repos',
+      tag: 'CODEBASES',
+      note: 'All public & committed',
+      color: 'blue',
+      accentColor: '#D1E8FD',
+    },
+    {
+      id: 'research',
+      value: '3',
+      label: 'Research threads',
+      tag: 'PUBLICATIONS',
+      note: '1 IEEE pub + 2 active',
+      color: 'pink',
+      accentColor: '#F9D4F4',
+    },
+    {
+      id: 'certifications',
+      value: '6',
+      label: 'Certifications & awards',
+      tag: 'ACHIEVEMENTS',
+      note: 'Salesforce Runner-Up',
+      color: 'purple',
+      accentColor: '#D8D8FF',
+    },
   ],
 }
 

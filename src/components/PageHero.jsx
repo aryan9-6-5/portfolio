@@ -1,34 +1,22 @@
-import { motion } from 'framer-motion'
 import Reveal from './Reveal.jsx'
-import { IconRainbow, IconPlane } from './icons.jsx'
+import HeroImageGrid from './HeroImageGrid.jsx'
+import HeroCloud from './HeroCloud.jsx'
 
-export default function PageHero({ color = 'blue', eyebrow, heading, sub, decor = false }) {
+export default function PageHero({ theme, color = 'blue', eyebrow, heading, sub }) {
+  const activeTheme = theme || (color === 'purple' ? 'purple' : color === 'emerald' ? 'emerald' : 'blue')
+
   return (
-    <section className={`page-hero ${color}`}>
-      {decor && (
-        <>
-          <motion.span
-            className="page-hero-decor rainbow"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', duration: 1.2, bounce: 0.2, delay: 0.5 }}
-          >
-            <IconRainbow />
-          </motion.span>
-          <motion.span
-            className="page-hero-decor plane"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', duration: 1.2, bounce: 0.2, delay: 0.8 }}
-          >
-            <IconPlane />
-          </motion.span>
-        </>
-      )}
-      <Reveal className="page-hero-wrap" y={10}>
-        <h1 className="heading-1">{heading}</h1>
-        {sub && <p className="body-24">{sub}</p>}
-      </Reveal>
+    <section className={`hero page-hero theme-${activeTheme}`}>
+      <HeroImageGrid theme={activeTheme} />
+      <HeroCloud theme={activeTheme} />
+
+      <div className="hero-wrap page-hero-inner-wrap">
+        <Reveal y={10}>
+          {eyebrow && <span className="eyebrow">{eyebrow}</span>}
+          <h1 className="display-1 page-hero-headline">{heading}</h1>
+          {sub && <p className="body-24 page-hero-sub">{sub}</p>}
+        </Reveal>
+      </div>
     </section>
   )
 }
