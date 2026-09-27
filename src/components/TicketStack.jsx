@@ -66,14 +66,16 @@ export default function TicketStack({ projects = [], onSelectProject }) {
   }, [punchedIds])
 
   // Punch handler — callable on scroll clamp or manual tap
-  const triggerPunch = useCallback((project) => {
+  const triggerPunch = useCallback((project, playSound = true) => {
     if (!project || punchedIdsRef.current.includes(project.id)) return
     const nextPunched = [...punchedIdsRef.current, project.id]
     punchedIdsRef.current = nextPunched
     setPunchedIds(nextPunched)
 
     // Play crisp physical mechanical sound effect
-    playPunchSound()
+    if (playSound) {
+      playPunchSound()
+    }
 
     setFallingDisc({
       id: `${project.id}-${Date.now()}`,
@@ -96,11 +98,11 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     const ALIGNED_PUNCH_X = isMobile ? -170 : -188
     const OFFSCREEN_LEFT_X = isMobile ? -380 : -580
 
-    // Ensure all earlier tickets the user scrolled past are marked punched!
+    // Mark any earlier tickets the user scrolled past silently without audio collisions
     for (let i = 0; i < currentIdx; i++) {
       const p = projects[i]
       if (p && !punchedIdsRef.current.includes(p.id)) {
-        triggerPunch(p)
+        triggerPunch(p, false)
       }
     }
 
@@ -119,7 +121,7 @@ export default function TicketStack({ projects = [], onSelectProject }) {
 
       // Automatic punch on clamp
       if (currentProject && !punchedIdsRef.current.includes(currentProject.id)) {
-        triggerPunch(currentProject)
+        triggerPunch(currentProject, true)
       }
     } else {
       const t = (localProgress - 0.74) / 0.10

@@ -114,7 +114,7 @@ export const projects = {
       id: 'fintrack',
       ticketNo: '03',
       code: 'FIN-2025',
-      name: 'fintrack',
+      name: 'FinTrack',
       category: 'Backend / API',
       role: 'Production REST API',
       desc: 'Production-grade personal finance REST API with JWT auth and fraud detection, deployed on AWS EC2.',

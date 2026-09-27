@@ -43,7 +43,7 @@ const PROJECT_DETAILS = {
   fintrack: {
     tagline: 'High-throughput enterprise financial transaction ledger and anomaly detector',
     overview:
-      'fintrack is a secure, high-concurrency personal finance API built to track multi-account transaction flows, detect spending anomalies, and generate real-time fiscal telemetry. Engineered with strict financial ACID guarantees and stateless security.',
+      'FinTrack is a secure, high-concurrency personal finance API built to track multi-account transaction flows, detect spending anomalies, and generate real-time fiscal telemetry. Engineered with strict financial ACID guarantees and stateless security.',
     architecture: [
       { label: 'Core Framework', desc: 'Java 17, Spring Boot 3, and Spring Data JPA with HikariCP pooling' },
       { label: 'Security', desc: 'Spring Security with stateless HMAC-SHA256 JWT tokens and granular RBAC' },
