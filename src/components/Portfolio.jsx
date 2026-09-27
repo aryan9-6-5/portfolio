@@ -43,6 +43,15 @@ function ScrollPunchTicket({
   const [isPunching, setIsPunching] = useState(false)
   const manualPunchingRef = useRef(false)
   const hasTriggeredRef = useRef(isPunched)
+  const isReadyRef = useRef(false)
+
+  useEffect(() => {
+    // Grace period on route change/mount to prevent auto-punching during navigation scroll
+    const timer = setTimeout(() => {
+      isReadyRef.current = true
+    }, 450)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     if (!isPunched) {
@@ -57,6 +66,7 @@ function ScrollPunchTicket({
   })
 
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
+    if (!isReadyRef.current) return
     if (manualPunchingRef.current) return
 
     // If ticket is already punched, puncher stays offscreen
