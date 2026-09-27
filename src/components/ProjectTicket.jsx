@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { IconArrow } from './icons.jsx'
 import SlideText from './SlideText.jsx'
+import { projects } from '../data/content.js'
 
 /**
  * ProjectTicket
@@ -120,7 +121,7 @@ export default function ProjectTicket({
 
           <div className="ticket-serial-badge">
             <span className="serial-dot" style={{ backgroundColor: accentColor }} />
-            TICKET #{ticketNo} / 04
+            TICKET #{ticketNo} / {String(projects.items.length).padStart(2, '0')}
           </div>
         </div>
 

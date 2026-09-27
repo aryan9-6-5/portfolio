@@ -76,6 +76,78 @@ const PROJECT_DETAILS = {
       { value: '65%', label: 'Storage Reduction' },
     ],
   },
+  taskflux: {
+    tagline: 'Vision-language-action changeover handling for collaborative robots mid-assembly',
+    overview:
+      'TaskFlux is a vision-language-action framework built on OpenVLA for collaborative robots that get a new instruction while a product is already half-assembled. It separates three problems most VLA work conflates — resolving what an instruction refers to, reacting when the world drifts from plan, and handling the goal itself being withdrawn mid-execution — and builds intent classification, state reconciliation, and refusal paths specifically for the third case.',
+    architecture: [
+      { label: 'Base Model', desc: 'OpenVLA (7B, Prismatic-7B) fine-tuned with rank-32 LoRA adapters' },
+      { label: 'State Reconciliation', desc: 'Tracks partial-assembly progress so a changeover reuses completed work instead of restarting' },
+      { label: 'Refusal Paths', desc: 'Gated policy routing that declines unsafe or ambiguous replans rather than guessing' },
+      { label: 'Evaluation Protocol', desc: '207 automated tests across a single-arm sim cell, scored on 5 custom changeover metrics' },
+    ],
+    challenge:
+      "Undo turned out to be a harder manipulation problem than assembly itself — reversing partial work safely needed its own reconciliation logic, not just a re-run of the planner. It's simulation-only for now; the OpenVLA weights haven't been tested on real hardware yet, and the README says so plainly.",
+    metrics: [
+      { value: '~160s', label: 'Reconciliation vs 290–310s naive' },
+      { value: '0', label: 'Unneeded undos' },
+      { value: '207', label: 'Automated sim tests' },
+    ],
+  },
+  rego: {
+    tagline: 'Neuro-symbolic compliance gate that blocks non-compliant models before they ship',
+    overview:
+      'Rego treats regulatory compliance as a build gate instead of a post-deployment audit. An LLM (Claude 3.5 Sonnet, GPT-4o as backup) translates legal text into formal logic, and a Z3 SMT solver mathematically verifies a model satisfies it — producing a machine-checkable proof certificate instead of a 400-page audit report. Retraining triggers when the regulation changes, not only when the data drifts.',
+    architecture: [
+      { label: 'Formal Verification', desc: 'Z3 SMT solver proves compliance rather than approximating it' },
+      { label: 'Legal NLP', desc: 'OpenRouter-routed Claude 3.5 Sonnet parses regulatory text into logic, GPT-4o as fallback' },
+      { label: 'Compliance Lineage', desc: 'Neo4j Aura graph tracks which regulation gated which model version' },
+      { label: 'Artifact Tracking', desc: 'MLflow + DVC version the models and data the proofs are checked against' },
+    ],
+    challenge:
+      "Most MLOps tooling only watches for data drift. The harder problem was wiring a language model's legal interpretation into something a solver could actually verify — neuro-symbolic, not just an LLM's word for it.",
+    metrics: [
+      { value: 'Z3 SMT', label: 'Formal proof, not audit' },
+      { value: 'Seconds', label: 'Proof certificate generation' },
+      { value: 'Neo4j', label: 'Regulation → model lineage' },
+    ],
+  },
+  knowledgeassistant: {
+    tagline: 'Hybrid-retrieval RAG assistant that cites its sources by page',
+    overview:
+      'Upload documents, ask questions, get answers with citations back to the exact source page. Retrieval combines BM25 keyword search and semantic embeddings via Reciprocal Rank Fusion, then a cross-encoder re-ranks the results before Groq-served Llama-3.3 70B streams the answer token by token.',
+    architecture: [
+      { label: 'Hybrid Retrieval', desc: 'Cosine similarity + BM25 combined with Reciprocal Rank Fusion' },
+      { label: 'Re-ranking', desc: 'Cross-encoder re-scores the fused candidates before generation' },
+      { label: 'Vector Store', desc: 'ChromaDB with local all-MiniLM-L6-v2 embeddings' },
+      { label: 'Generation', desc: 'Groq-served Llama-3.3 70B, streamed token by token' },
+    ],
+    challenge:
+      'Keyword search alone missed paraphrased questions; pure semantic search missed exact terms. Fusing both and re-ranking the merged set before generation was the fix — every answer still has to point back to a real page, not just a plausible-sounding source.',
+    metrics: [
+      { value: 'BM25 + Cosine', label: 'Hybrid retrieval, RRF-fused' },
+      { value: 'Cross-encoder', label: 'Re-ranked before generation' },
+      { value: 'Page-level', label: 'Source citations' },
+    ],
+  },
+  volforecaster: {
+    tagline: 'Forecasting how implied volatility surfaces move across an options chain',
+    overview:
+      'A full pipeline for multi-step-ahead forecasting of implied volatility surfaces: pulling options chain data on a schedule, interpolating it onto a standardized grid, training financially-constrained neural nets, and serving predictions through an API with MLflow tracking.',
+    architecture: [
+      { label: 'Data Collection', desc: 'yfinance + APScheduler pulling options chains on a schedule' },
+      { label: 'Grid Interpolation', desc: 'SciPy RBF interpolation onto a standardized vol-surface grid' },
+      { label: 'Forecasting Models', desc: 'PyTorch ConvLSTM, LSTM and Transformer models with financial constraints' },
+      { label: 'Baselines', desc: 'Five econometric baselines from naive to GARCH, scored by market region' },
+    ],
+    challenge:
+      "The pipeline and serving layer are complete and verified end-to-end, but this is listed as infrastructure, not a finished trading signal — there's no published accuracy number I'd stand behind yet, and I'd rather say that plainly than imply one.",
+    metrics: [
+      { value: '5', label: 'Baselines, naive → GARCH' },
+      { value: 'ATM / OTM / Wings', label: 'Scored by market region' },
+      { value: 'ConvLSTM / Transformer', label: 'Model architectures' },
+    ],
+  },
 }
 
 export default function ProjectModal({ project, onClose }) {
