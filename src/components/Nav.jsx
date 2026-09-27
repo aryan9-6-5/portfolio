@@ -1,90 +1,202 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { nav } from '../data/content.js'
-import { ICONS, IconHamburger, IconClose } from './icons.jsx'
+import { ICONS, IconArrow } from './icons.jsx'
 import NameMark from './NameMark.jsx'
+import SlideText from './SlideText.jsx'
 import DrawUnderline from './DrawUnderline.jsx'
 
 export default function Nav() {
   const [sticky, setSticky] = useState(false)
   const [open, setOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 810 : false))
+  const [hoveredLink, setHoveredLink] = useState(null)
+  const location = useLocation()
 
   useEffect(() => {
-    function onScroll() { setSticky(window.scrollY > 40) }
-    function onResize() { setIsMobile(window.innerWidth < 810) }
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onResize)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onResize)
+    function onScroll() {
+      setSticky(window.scrollY > 20)
     }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const paddingY = isMobile ? (sticky ? 8 : 12) : (sticky ? 12 : 28)
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setOpen(false)
+  }, [location.pathname, location.hash])
+
+  // Prevent background scroll when mobile menu is open
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    if (open) {
+      document.body.style.overflow = 'hidden'
+      window.addEventListener('keydown', handleKeyDown)
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [open])
+
+  const isLinkActive = (to) => {
+    if (to === '/') {
+      return location.pathname === '/' && !location.hash
+    }
+    if (to.startsWith('/#')) {
+      const targetHash = to.replace('/', '')
+      return location.pathname === '/' && location.hash === targetHash
+    }
+    return location.pathname === to
+  }
 
   return (
     <>
-      <header className={`site-header${sticky ? ' sticky' : ''}`}>
-        <motion.div
-          className="header-inner"
-          animate={{ paddingTop: paddingY, paddingBottom: paddingY }}
-          transition={{ type: 'spring', duration: 0.8, bounce: 0.2 }}
-        >
-          <Link to="/" className="header-logo" onClick={() => setOpen(false)}>
+      <header className={`site-header-dock ${sticky ? 'is-sticky' : ''}`}>
+        <div className="nav-capsule">
+          {/* Left Brand Monogram & Name */}
+          <Link to="/" className="nav-brand-anchor" aria-label="Aryan - Home">
+            <div className="nav-brand-badge" title="Aryan Hanumakonda">
+              <span className="nav-brand-glyph">A</span>
+              <span className="nav-brand-reticle" aria-hidden="true" />
+            </div>
             <NameMark>{nav.name}</NameMark>
           </Link>
 
-          <ul className="header-nav">
-            {nav.links.map((l) => (
-              <li key={l.label}>
-                <NavLink to={l.to} end={l.to === '/'}><DrawUnderline>{l.label}</DrawUnderline></NavLink>
-              </li>
-            ))}
-          </ul>
+          {/* Center Links Segment with Magnetic Pill (Desktop) */}
+          <nav className="nav-links-segment" aria-label="Main Navigation">
+            {nav.links.map((link) => {
+              const active = isLinkActive(link.to)
+              const isHovered = hoveredLink === link.label
 
-          <div className="header-socials">
-            {nav.socials.map((s) => {
-              const Icon = ICONS[s.icon]
               return (
-                <a key={s.label} className="icon-btn" href={s.href} target="_blank" rel="noreferrer" aria-label={s.label}>
-                  <Icon />
-                </a>
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className={`nav-link-item ${active ? 'is-active' : ''}`}
+                >
+                  <DrawUnderline>{link.label}</DrawUnderline>
+                </Link>
               )
             })}
-          </div>
+          </nav>
 
-          <button className="icon-btn header-burger" aria-label="Menu" onClick={() => setOpen((v) => !v)}>
-            {open ? <IconClose /> : <IconHamburger />}
-          </button>
-        </motion.div>
+          {/* Right Action Cluster */}
+          <div className="nav-action-cluster">
+            <div className="nav-social-group">
+              {nav.socials.map((s) => {
+                const Icon = ICONS[s.icon]
+                return (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`nav-social-btn nav-social-${s.icon}`}
+                    aria-label={s.label}
+                    title={s.label}
+                  >
+                    <Icon />
+                  </a>
+                )
+              })}
+            </div>
+
+            <Link to={nav.cta.to} className="nav-cta-btn">
+              <SlideText>{nav.cta.label}</SlideText>
+              <IconArrow width={14} height={14} />
+            </Link>
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              type="button"
+              className={`nav-burger-btn ${open ? 'is-open' : ''}`}
+              onClick={() => setOpen((prev) => !prev)}
+              aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={open}
+            >
+              <span className="burger-bar bar-1" />
+              <span className="burger-bar bar-2" />
+            </button>
+          </div>
+        </div>
       </header>
 
+      {/* Modern Mobile Navigation Drawer */}
       <AnimatePresence>
         {open && (
-          <>
+          <div className="nav-mobile-layer">
             <motion.div
-              className="mobile-overlay"
+              className="nav-mobile-backdrop"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25 }}
               onClick={() => setOpen(false)}
             />
+
             <motion.nav
-              className="mobile-menu"
-              initial={{ opacity: 0, y: '-100%' }}
-              animate={{ opacity: 1, y: '0%' }}
-              exit={{ opacity: 0, y: '-100%' }}
-              transition={{ type: 'spring', duration: 0.8, bounce: 0.2 }}
+              className="nav-mobile-sheet"
+              initial={{ opacity: 0, y: -20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -16, scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              aria-label="Mobile Navigation"
             >
-              {nav.links.map((l) => (
-                <Link key={l.label} to={l.to} onClick={() => setOpen(false)}>{l.label}</Link>
-              ))}
+
+              <ul className="nav-mobile-menu">
+                {nav.links.map((link, idx) => {
+                  const active = isLinkActive(link.to)
+                  return (
+                    <li key={link.label}>
+                      <Link
+                        to={link.to}
+                        className={`nav-mobile-link ${active ? 'is-active' : ''}`}
+                        onClick={() => setOpen(false)}
+                      >
+                        <span className="nav-mobile-num">0{idx + 1}</span>
+                        <span className="nav-mobile-text">{link.label}</span>
+                        <span className="nav-mobile-arrow" aria-hidden="true">→</span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+
+              <div className="nav-mobile-bottom">
+                <Link
+                  to={nav.cta.to}
+                  className="nav-mobile-cta"
+                  onClick={() => setOpen(false)}
+                >
+                  <SlideText>{nav.cta.label} with Aryan</SlideText>
+                  <IconArrow />
+                </Link>
+
+                <div className="nav-mobile-socials">
+                  {nav.socials.map((s) => {
+                    const Icon = ICONS[s.icon]
+                    return (
+                      <a
+                        key={s.label}
+                        href={s.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`nav-mobile-social-chip nav-mobile-social-${s.icon}`}
+                      >
+                        <Icon />
+                        <span>{s.label}</span>
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
             </motion.nav>
-          </>
+          </div>
         )}
       </AnimatePresence>
     </>

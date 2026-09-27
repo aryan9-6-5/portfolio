@@ -27,7 +27,7 @@ export default function ContactForm() {
 
     setState('loading')
     const subject = encodeURIComponent(`Portfolio contact from ${name}`)
-    const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`)
+    const body = encodeURIComponent(`${message}\n\n- ${name} (${email})`)
 
     setTimeout(() => {
       window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`

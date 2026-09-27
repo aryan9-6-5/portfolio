@@ -81,7 +81,7 @@ function RetinalCardFaces() {
         <div className="tape-strip" aria-hidden="true" />
 
         <div className="note-top-row">
-          <span className="note-editorial-pill pill-retinal">FIELD NOTE — 01</span>
+          <span className="note-editorial-pill pill-retinal">FIELD NOTE 01</span>
           <span className="handwritten-label-retinal">CLINICAL AUDIT</span>
         </div>
 
@@ -196,7 +196,7 @@ function BrainWavesCardFaces() {
         <div className="tape-strip" aria-hidden="true" />
 
         <div className="note-top-row">
-          <span className="note-editorial-pill pill-brain">FIELD NOTE — 02</span>
+          <span className="note-editorial-pill pill-brain">FIELD NOTE 02</span>
           <span className="handwritten-label-brain">EMPIRICAL NULL</span>
         </div>
 
@@ -207,7 +207,7 @@ function BrainWavesCardFaces() {
           <div className="back-finding-item">
             <span className="finding-num-tag" style={{ background: 'rgba(124, 58, 237, 0.08)', color: '#7C3AED' }}>01</span>
             <div className="finding-text-group">
-              <strong className="finding-title">0.717 AUROC — Frozen Baseline</strong>
+              <strong className="finding-title">0.717 AUROC: Frozen Baseline</strong>
               <p className="finding-desc">Standard deep baseline generalized stably without parameter churn.</p>
             </div>
           </div>
@@ -215,7 +215,7 @@ function BrainWavesCardFaces() {
           <div className="back-finding-item">
             <span className="finding-num-tag" style={{ background: 'rgba(124, 58, 237, 0.08)', color: '#7C3AED' }}>02</span>
             <div className="finding-text-group">
-              <strong className="finding-title">0.692 AUROC — Adaptive SNN</strong>
+              <strong className="finding-title">0.692 AUROC: Adaptive SNN</strong>
               <p className="finding-desc">Online weight plasticity tracked scalp electrode noise faster than task dynamics.</p>
             </div>
           </div>
@@ -336,7 +336,7 @@ function ResidualProbeCardFaces() {
         </div>
 
         <div className="note-top-row">
-          <span className="note-editorial-pill pill-probe">FIELD NOTE — 03</span>
+          <span className="note-editorial-pill pill-probe">FIELD NOTE 03</span>
           <span className="handwritten-label-probe">ACTIVE PROBE</span>
         </div>
 
@@ -466,7 +466,7 @@ export default function Research() {
         <Reveal className="section-head desk-head" y={10}>
           <h2 className="heading-1 research-heading-dark">Three real research threads</h2>
           <p className="body-text research-sub-dark">
-            One peer-reviewed publication and two active inquiries — where null results are shared as plainly as wins.
+            One peer-reviewed publication and two active inquiries, where null results are shared as plainly as wins.
           </p>
         </Reveal>
 

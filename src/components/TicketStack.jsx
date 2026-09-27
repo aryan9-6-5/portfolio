@@ -47,8 +47,9 @@ export default function TicketStack({ projects = [], onSelectProject }) {
   }, [])
 
   // Dynamic state for mechanical puncher
-  const defaultOffscreen = isMobile ? -380 : -580
-  const [puncherX, setPuncherX] = useState(defaultOffscreen)
+  const ALIGNED_PUNCH_X = isMobile ? -170 : -188
+  const OFFSCREEN_LEFT_X = isMobile ? -380 : -580
+  const [puncherX, setPuncherX] = useState(OFFSCREEN_LEFT_X)
   const [isPunching, setIsPunching] = useState(false)
   const [activeTicketIndex, setActiveTicketIndex] = useState(0)
   const [fallingDisc, setFallingDisc] = useState(null)
@@ -65,7 +66,10 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     punchedIdsRef.current = punchedIds
   }, [punchedIds])
 
-  // Punch handler — callable on scroll clamp or manual tap
+  const currentlyPunchingIdRef = useRef(null)
+  const prevProgressRef = useRef(0)
+
+  // Punch handler: callable on scroll clamp or manual tap
   const triggerPunch = useCallback((project, playSound = true) => {
     if (!project || punchedIdsRef.current.includes(project.id)) return
     const nextPunched = [...punchedIdsRef.current, project.id]
@@ -81,11 +85,25 @@ export default function TicketStack({ projects = [], onSelectProject }) {
       id: `${project.id}-${Date.now()}`,
       color: project.accentColor,
     })
-    setIsPunching(true)
-    setTimeout(() => setIsPunching(false), 420)
   }, [])
 
+  const handleManualPunch = useCallback((project) => {
+    if (!project || punchedIdsRef.current.includes(project.id)) return
+    setPuncherX(ALIGNED_PUNCH_X)
+    setTimeout(() => {
+      setIsPunching(true)
+      triggerPunch(project, true)
+      setTimeout(() => {
+        setIsPunching(false)
+        setTimeout(() => setPuncherX(OFFSCREEN_LEFT_X), 180)
+      }, 220)
+    }, 160)
+  }, [ALIGNED_PUNCH_X, OFFSCREEN_LEFT_X, triggerPunch])
+
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
+    const isScrollingDown = progress >= (prevProgressRef.current || 0)
+    prevProgressRef.current = progress
+
     const slotSize = 1 / total
     const rawSlot = progress / slotSize
     const currentIdx = Math.min(Math.floor(rawSlot), total - 1)
@@ -94,22 +112,37 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     const currentProject = projects[currentIdx]
     const localProgress = rawSlot - currentIdx // 0.0 to 1.0 within current ticket
 
-    // Alignment coordinate calibrated to stub crosshairs
-    const ALIGNED_PUNCH_X = isMobile ? -170 : -188
-    const OFFSCREEN_LEFT_X = isMobile ? -380 : -580
-
     // Mark any earlier tickets the user scrolled past silently without audio collisions
-    for (let i = 0; i < currentIdx; i++) {
-      const p = projects[i]
-      if (p && !punchedIdsRef.current.includes(p.id)) {
-        triggerPunch(p, false)
+    if (isScrollingDown) {
+      for (let i = 0; i < currentIdx; i++) {
+        const p = projects[i]
+        if (p && !punchedIdsRef.current.includes(p.id)) {
+          triggerPunch(p, false)
+        }
       }
     }
 
+    // Reset active stroke state outside clamp zone
     if (localProgress < 0.36 || localProgress > 0.84) {
+      currentlyPunchingIdRef.current = null
       setPuncherX(OFFSCREEN_LEFT_X)
       setIsPunching(false)
-    } else if (localProgress < 0.52) {
+      return
+    }
+
+    const isAlreadyPunched =
+      currentProject &&
+      punchedIdsRef.current.includes(currentProject.id) &&
+      currentlyPunchingIdRef.current !== currentProject.id
+
+    // If already punched before entering or while scrolling backwards, do NOT re-punch or clamp!
+    if (isAlreadyPunched || (!isScrollingDown && !currentlyPunchingIdRef.current)) {
+      setPuncherX(OFFSCREEN_LEFT_X)
+      setIsPunching(false)
+      return
+    }
+
+    if (localProgress < 0.52) {
       const t = (localProgress - 0.36) / 0.16
       const eased = Math.sin((t * Math.PI) / 2)
       setPuncherX(OFFSCREEN_LEFT_X + eased * (ALIGNED_PUNCH_X - OFFSCREEN_LEFT_X))
@@ -121,6 +154,7 @@ export default function TicketStack({ projects = [], onSelectProject }) {
 
       // Automatic punch on clamp
       if (currentProject && !punchedIdsRef.current.includes(currentProject.id)) {
+        currentlyPunchingIdRef.current = currentProject.id
         triggerPunch(currentProject, true)
       }
     } else {
@@ -183,7 +217,7 @@ export default function TicketStack({ projects = [], onSelectProject }) {
                   isCurrentlyPunching={isCurrentlyPunching}
                   scrollYProgress={scrollYProgress}
                   onSelect={onSelectProject}
-                  onManualPunch={() => triggerPunch(project)}
+                  onManualPunch={() => handleManualPunch(project)}
                 />
               )
             })}

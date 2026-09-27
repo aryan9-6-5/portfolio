@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+reference
+graphify-out
+.firecrawl
+.git
+*.mp4
+*.zip

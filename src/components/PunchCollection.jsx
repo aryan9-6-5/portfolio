@@ -77,7 +77,7 @@ export default function PunchCollection({
                   transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                   title={`${proj.name} punched chit`}
                 >
-                  <span className="punch-disc-label">{proj.ticketNo}</span>
+                  <span className="punch-disc-label">{proj.isInternship ? 'INT' : proj.ticketNo}</span>
                 </motion.div>
               )
             })}

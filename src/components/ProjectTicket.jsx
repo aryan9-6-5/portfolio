@@ -36,7 +36,7 @@ export default function ProjectTicket({
     <div
       className={`collectible-ticket ${isPunched ? 'ticket-is-punched' : ''} ${
         isCurrentlyPunching ? 'ticket-is-punching' : ''
-      }`}
+      } ${project.isInternship ? 'ticket-internship-theme' : ''}`}
       style={{
         '--ticket-accent': accentColor,
         '--ticket-bg-accent': accentBg,
@@ -107,7 +107,9 @@ export default function ProjectTicket({
         {/* Stub Decorative Barcode */}
         <div className="stub-barcode-wrap" aria-hidden="true">
           <div className="stub-barcode-lines">{barcode}</div>
-          <span className="stub-barcode-text">PASS-{ticketNo}-2026</span>
+          <span className="stub-barcode-text">
+            {project.isInternship ? `INTERN-${ticketNo}-2025` : `PASS-${ticketNo}-2026`}
+          </span>
         </div>
       </div>
 
@@ -123,6 +125,11 @@ export default function ProjectTicket({
         {/* Top Header Bar */}
         <div className="ticket-top-bar">
           <div className="ticket-badges-group">
+            {project.isInternship && (
+              <span className="internship-special-pill">
+                🏢 INDUSTRIAL INTERNSHIP
+              </span>
+            )}
             <span
               className="ticket-category-pill"
               style={{ backgroundColor: accentBg, color: accentColor, borderColor: accentColor }}
@@ -134,7 +141,9 @@ export default function ProjectTicket({
 
           <div className="ticket-serial-badge">
             <span className="serial-dot" style={{ backgroundColor: accentColor }} />
-            TICKET #{ticketNo} / {String(total || projects.items.length).padStart(2, '0')}
+            {project.isInternship
+              ? `INTERNSHIP PASS #${ticketNo}`
+              : `TICKET #${ticketNo} / ${String(total || projects.items.length).padStart(2, '0')}`}
           </div>
         </div>
 

@@ -312,13 +312,25 @@ export function ProjectList({ items, onSelectProject, initialTargetId }) {
  */
 export default function Portfolio({ maxItems = 3 }) {
   // "Inspect Ticket" on the homepage opens the dossier right here as an
-  // overlay — it must NOT navigate to /projects. Routing there and back
+  // overlay: it must NOT navigate to /projects. Routing there and back
   // was clearing the URL hash on close, which made ScrollManager reset
   // the scroll position, so closing the dossier looked like it dropped
   // you on a different page instead of leaving you exactly where you
   // were on the homepage.
   const [selectedProject, setSelectedProject] = useState(null)
-  const displayItems = projects.items.slice(0, maxItems)
+  const FEATURED_HOME_IDS = ['multimodalrag', 'retailclassifier', 'studysmart']
+  const displayItems = FEATURED_HOME_IDS
+    .map((id, idx) => {
+      const p = projects.items.find((item) => item.id === id)
+      if (!p) return null
+      const num = `0${idx + 1}`
+      return {
+        ...p,
+        ticketNo: num,
+        gate: `GATE H-${num}`,
+      }
+    })
+    .filter(Boolean)
 
   return (
     <section id="work" className="section portfolio-ticket-experience">

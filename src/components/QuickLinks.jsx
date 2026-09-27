@@ -48,7 +48,7 @@ function QuickCard({ item, index, scrollYProgress, isWide }) {
         {/* Large watermark number */}
         <span className="ql-num" aria-hidden="true">{num}</span>
 
-        {/* Top row — stamp tag + icon */}
+        {/* Top row: stamp tag + icon */}
         <div className="ql-top">
           <span className="ql-stamp">{item.tag || `DESTINATION · ${num}`}</span>
           <div className="ql-icon-wrap">
@@ -65,7 +65,7 @@ function QuickCard({ item, index, scrollYProgress, isWide }) {
         {/* Description */}
         <p className="ql-desc">{item.desc}</p>
 
-        {/* Footer row — arrow */}
+        {/* Footer row: arrow */}
         <div className="ql-footer">
           <span className="ql-go">Go there</span>
           <motion.span className="ql-arrow" style={{ x: arrowX }}>

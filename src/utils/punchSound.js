@@ -101,7 +101,7 @@ function synthesizePunch(ctx) {
   // Tactile haptics on mobile
   try {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate([28, 35, 20])
+      navigator.vibrate(28)
     }
   } catch {
     // ignore
@@ -114,7 +114,7 @@ export function playPunchSound() {
     if (!ctx) return
 
     const now = performance.now()
-    if (now - lastPlayTime < 90) return // Debounce fast micro-triggers to prevent audio clipping
+    if (now - lastPlayTime < 180) return // Prevent any accidental double punch audio triggers
     lastPlayTime = now
 
     if (ctx.state === 'suspended') {
