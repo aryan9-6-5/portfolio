@@ -3,6 +3,9 @@ import { ICONS } from './icons.jsx'
 import Reveal from './Reveal.jsx'
 import SlideText from './SlideText.jsx'
 
+const TAG_COLORS = ['blue', 'pink', 'green']
+const TAG_ROTATE = [-4, 3, -5]
+
 function HandArrow() {
   return (
     <svg width="40" height="30" viewBox="0 0 40 30" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
@@ -16,6 +19,8 @@ export default function Contact() {
   return (
     <section id="contact" className="section contact-section">
       <div className="container">
+        <div className="airmail-edge airmail-edge-sm" aria-hidden="true" />
+
         <Reveal delay={0}>
           <div className="contact-portrait">
             <img src={`/mascot/${contact.pose}.png`} alt="Aryan mascot" />
@@ -42,10 +47,18 @@ export default function Contact() {
 
         <Reveal delay={0.4}>
           <div className="contact-links">
-            {contact.links.map((l) => {
+            {contact.links.map((l, i) => {
               const Icon = ICONS[l.icon]
               return (
-                <a key={l.label} className="contact-link" href={l.href} target="_blank" rel="noreferrer">
+                <a
+                  key={l.label}
+                  className={`contact-link contact-link-tag ${TAG_COLORS[i % TAG_COLORS.length]}`}
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ '--tag-rotate': `${TAG_ROTATE[i % TAG_ROTATE.length]}deg` }}
+                >
+                  <span className="contact-tag-hole" aria-hidden="true" />
                   <Icon />
                   <span className="contact-link-label">{l.label}</span>
                   <span className="contact-link-value">{l.value}</span>
