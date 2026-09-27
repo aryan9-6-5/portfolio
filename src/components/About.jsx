@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion'
 import { about, coding } from '../data/content.js'
 import Reveal from './Reveal.jsx'
 import SkillBar from './SkillBar.jsx'
@@ -84,23 +84,42 @@ function PinnedThoughtCloud({ item, index, scrollYProgress, isStacked }) {
     </motion.div>
   )
 
-  // On the stacked mobile/tablet layout the corner-popup scroll transform
-  // is neutralized by CSS (see the final responsive pass in styles.css),
-  // so give each card its own simple scroll-reveal instead of leaving it
-  // static in the middle of a red section.
-  if (!isStacked) return card
-  return (
-    <Reveal delay={index * 0.06} y={24}>
-      {card}
-    </Reveal>
-  )
+  // On stacked mobile/tablet layout, give each card a lively spring pop-in
+  // with full comic ray bursts, thought tail, and tactile interactive feedback
+  if (isStacked) {
+    return (
+      <motion.div
+        className="pinned-thought-cloud-item mobile-thought-cloud"
+        id={`thought-card-${index}`}
+        initial={{ opacity: 0, scale: 0.86, y: 36 }}
+        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.3 }}
+        transition={{
+          type: 'spring',
+          stiffness: 420,
+          damping: 26,
+          delay: index * 0.04,
+        }}
+      >
+        <div className="thought-bubble-wrap">
+          <RayBursts position={rayPos} />
+          <div className={`card thought-cloud-bubble ${item.color}`}>
+            <span className="thought-step-badge">Thought 0{index + 1}</span>
+            <h3 className="thought-heading">{item.title}</h3>
+            <p className="thought-text">{item.thought}</p>
+          </div>
+          <ThoughtCloudTail position="top-center" />
+        </div>
+      </motion.div>
+    )
+  }
+
+  return card
 }
 
 export default function About() {
   const containerRef = useRef(null)
 
-  // Below tablet width the pinned scroll-jack collapses to a plain
-  // stacked column (see the final responsive pass in styles.css).
   const [isStacked, setIsStacked] = useState(() => (typeof window !== 'undefined' ? window.innerWidth <= 900 : false))
 
   useEffect(() => {
@@ -109,44 +128,13 @@ export default function About() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Track scroll through the pinned runway
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  })
-
   return (
     <>
-      {/* 
-        The Pinned Scroll Section:
-        - Background image with Aryan standing remains constant throughout the scroll
-        - As user scrolls, thoughts pop in one after another around him and stay
-      */}
-      <section id="about" ref={containerRef} className="about-pinned-section">
-        <div className="about-pinned-stage">
-          {/* Constant Background Artwork */}
-          <div className="about-artwork-layer" aria-hidden="true">
-            <img
-              src="/about-mascot-standing.png"
-              alt="Aryan standing with crossed arms thinking"
-              className="about-artwork-img"
-            />
-          </div>
-
-          {/* Thought Clouds popping one by one around the constant character */}
-          <div className="about-clouds-stage">
-            {about.thoughts.map((item, index) => (
-              <PinnedThoughtCloud
-                key={item.title}
-                item={item}
-                index={index}
-                scrollYProgress={scrollYProgress}
-                isStacked={isStacked}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      {isStacked ? (
+        <MobileAboutStage />
+      ) : (
+        <DesktopAboutStage />
+      )}
 
       {/* Skills & Stack Summary following the thoughts experience */}
       <section className="section about-skills-section">
@@ -179,5 +167,179 @@ export default function About() {
         </div>
       </section>
     </>
+  )
+}
+
+/**
+ * Desktop Pinned 4-Corner Stage (Preserved exactly as requested)
+ */
+function DesktopAboutStage() {
+  const containerRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  })
+
+  return (
+    <section id="about" ref={containerRef} className="about-pinned-section">
+      <div className="about-pinned-stage">
+        {/* Constant Background Artwork */}
+        <div className="about-artwork-layer" aria-hidden="true">
+          <img
+            src="/about-mascot-standing.png"
+            alt="Aryan standing with crossed arms thinking"
+            className="about-artwork-img"
+          />
+        </div>
+
+        {/* Thought Clouds popping one by one around the constant character */}
+        <div className="about-clouds-stage">
+          {about.thoughts.map((item, index) => (
+            <PinnedThoughtCloud
+              key={item.title}
+              item={item}
+              index={index}
+              scrollYProgress={scrollYProgress}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/**
+ * Mobile Thought Cloud Stage:
+ * Pinned scroll-synced interactive story where Aryan stands thinking at top,
+ * and thought bubbles pop in dynamically with ray bursts, tails, and active tab steppers.
+ */
+function MobileAboutStage() {
+  const containerRef = useRef(null)
+  const [activeIdx, setActiveIdx] = useState(0)
+  const total = about.thoughts.length
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  })
+
+  useMotionValueEvent(scrollYProgress, 'change', (progress) => {
+    const slot = Math.min(Math.floor(progress * total), total - 1)
+    setActiveIdx(slot)
+  })
+
+  const currentThought = about.thoughts[activeIdx] || about.thoughts[0]
+
+  const handleSelect = (idx) => {
+    setActiveIdx(idx)
+  }
+
+  const handlePrev = () => {
+    setActiveIdx((prev) => Math.max(0, prev - 1))
+  }
+
+  const handleNext = () => {
+    setActiveIdx((prev) => Math.min(total - 1, prev + 1))
+  }
+
+  return (
+    <section id="about" ref={containerRef} className="about-mobile-pinned-section">
+      <div className="about-mobile-stage">
+        {/* Top Header */}
+        <div className="about-mobile-header">
+          <span className="about-mobile-eyebrow">{about.eyebrow}</span>
+          <h2 className="about-mobile-heading">{about.heading}</h2>
+        </div>
+
+        {/* Mascot Thinking Area */}
+        <div className="about-mobile-mascot-wrap">
+          <img
+            src="/about-mascot-standing.png"
+            alt="Aryan thinking with crossed arms"
+            className="about-mobile-mascot-img"
+          />
+        </div>
+
+        {/* Interactive Pill Stepper */}
+        <div className="about-mobile-stepper" role="tablist" aria-label="Thought stepper">
+          {about.thoughts.map((t, i) => (
+            <button
+              key={t.step}
+              type="button"
+              role="tab"
+              aria-selected={activeIdx === i}
+              className={`about-stepper-btn ${activeIdx === i ? 'is-active' : ''}`}
+              onClick={() => handleSelect(i)}
+            >
+              <span className="stepper-num">{t.step}</span>
+              <span className="stepper-label">{t.tag.split(' ')[0]}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Active Thought Bubble with AnimatePresence Spring Pop */}
+        <div className="about-mobile-cloud-viewport">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentThought.step}
+              className="about-mobile-cloud-card"
+              initial={{ opacity: 0, scale: 0.88, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: -12 }}
+              transition={{ type: 'spring', stiffness: 440, damping: 26 }}
+            >
+              <RayBursts position={activeIdx % 2 === 0 ? 'top-left' : 'top-right'} />
+              <div className={`card thought-cloud-bubble ${currentThought.color} mobile-thought-bubble`}>
+                <div className="mobile-bubble-badge-row">
+                  <span className="thought-step-badge">
+                    Thought {currentThought.step} / 04 · {currentThought.tag}
+                  </span>
+                </div>
+                <h3 className="thought-heading">{currentThought.title}</h3>
+                <p className="thought-text">{currentThought.thought}</p>
+              </div>
+              <ThoughtCloudTail position="top-center" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom Pagination & Scroll Hint */}
+        <div className="about-mobile-nav-bar">
+          <button
+            type="button"
+            className="about-nav-arrow"
+            onClick={handlePrev}
+            disabled={activeIdx === 0}
+            aria-label="Previous thought"
+          >
+            ←
+          </button>
+          <div className="about-nav-dots">
+            {about.thoughts.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`about-nav-dot ${activeIdx === i ? 'dot-active' : ''}`}
+                onClick={() => handleSelect(i)}
+                aria-label={`Jump to thought ${i + 1}`}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="about-nav-arrow"
+            onClick={handleNext}
+            disabled={activeIdx === total - 1}
+            aria-label="Next thought"
+          >
+            →
+          </button>
+        </div>
+
+        <span className="about-mobile-scroll-hint">
+          Scroll down or tap pills to reveal thoughts ↓
+        </span>
+      </div>
+    </section>
   )
 }

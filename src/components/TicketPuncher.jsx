@@ -6,12 +6,16 @@ import { motion } from 'framer-motion'
  * grip knurls, dual-jaw plier body, and punch rod mechanism.
  * Originates strictly from outside the left edge of the viewport.
  */
-export default function TicketPuncher({ x = -380, isPunching = false, active = false }) {
+export default function TicketPuncher({ x = -380, isPunching = false, active = false, isMobile = false }) {
+  const transform = isMobile
+    ? `translate3d(${x}px, -45%, 0) scale(0.68)`
+    : `translate3d(${x}px, -50%, 0) scale(1)`
+
   return (
     <motion.div
       className="ticket-puncher-rig"
       style={{
-        transform: `translate3d(${x}px, -50%, 0)`,
+        transform,
       }}
       aria-hidden="true"
     >
@@ -86,13 +90,13 @@ export default function TicketPuncher({ x = -380, isPunching = false, active = f
               <circle cx="304" cy="110" r="7" fill="#0F172A" stroke="#334155" strokeWidth="1.5" />
             </g>
 
-            {/* UPPER COMPRESSION LEVER (rotates down on punch) */}
+            {/* UPPER COMPRESSION LEVER (rotates down on punch with heavy clamp) */}
             <g
               className="puncher-upper-lever"
               style={{
                 transformOrigin: '195px 105px',
-                transition: 'transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                transform: isPunching ? 'rotate(9deg)' : 'rotate(0deg)',
+                transition: 'transform 0.08s cubic-bezier(0.2, 1.4, 0.4, 1)',
+                transform: isPunching ? 'rotate(14deg)' : 'rotate(0deg)',
               }}
             >
               {/* Upper handle arm */}
@@ -117,17 +121,17 @@ export default function TicketPuncher({ x = -380, isPunching = false, active = f
 
               {/* Upper punch cylinder pin house */}
               <rect x="294" y="86" width="20" height="22" rx="3" fill="url(#metalJaw)" stroke="#1E293B" strokeWidth="1.5" />
-              {/* Solid steel cutting pin */}
+              {/* Solid steel cutting pin (plunges deep through card into die mouth) */}
               <rect
                 x="298"
-                y={isPunching ? 102 : 94}
+                y={isPunching ? 108 : 92}
                 width="12"
-                height="16"
+                height="18"
                 rx="2"
-                fill="#E2E8F0"
+                fill="#F8FAFC"
                 stroke="#0F172A"
                 strokeWidth="1.5"
-                style={{ transition: 'y 0.14s ease' }}
+                style={{ transition: 'y 0.08s cubic-bezier(0.2, 1.4, 0.4, 1)' }}
               />
             </g>
 

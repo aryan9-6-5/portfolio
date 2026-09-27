@@ -71,12 +71,14 @@ export default function ProjectTicket({
           title={isPunched ? 'Ticket punched' : 'Click to punch ticket'}
           style={{ cursor: isPunched ? 'default' : 'pointer' }}
         >
+          {isCurrentlyPunching && <span className="punch-impact-shockwave" />}
+
           {isPunched ? (
             <motion.div
               className="punched-hole-cutout"
-              initial={{ scale: 1.4, opacity: 0 }}
+              initial={{ scale: 1.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              transition={{ type: 'spring', stiffness: 600, damping: 22 }}
             >
               <span className="hole-depth-rim" />
               <span className="hole-void" />

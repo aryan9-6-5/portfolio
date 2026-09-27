@@ -3,8 +3,9 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-mot
 import ProjectTicket from './ProjectTicket.jsx'
 import TicketPuncher from './TicketPuncher.jsx'
 import PunchCollection from './PunchCollection.jsx'
+import { playPunchSound } from '../utils/punchSound.js'
 
-const STORAGE_KEY = 'portfolio_punched_projects_v2'
+const STORAGE_KEY = 'portfolio_punched_projects_v3'
 
 // Natural, realistic physical stack offsets for cards waiting in the deck behind
 const STACK_PRESETS = [
@@ -34,7 +35,7 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Active set of punched project IDs (starts clean so no ticket is pre-punched before reaching it)
+  // Active set of punched project IDs (starts clean on refresh, retained during session)
   const [punchedIds, setPunchedIds] = useState([])
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function TicketStack({ projects = [], onSelectProject }) {
   }, [])
 
   // Dynamic state for mechanical puncher
-  const defaultOffscreen = isMobile ? -420 : -650
+  const defaultOffscreen = isMobile ? -380 : -580
   const [puncherX, setPuncherX] = useState(defaultOffscreen)
   const [isPunching, setIsPunching] = useState(false)
   const [activeTicketIndex, setActiveTicketIndex] = useState(0)
@@ -58,23 +59,29 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     offset: ['start start', 'end end'],
   })
 
-  // Punch handler — fires only on a deliberate click of the punch target.
+  // Track punched IDs with a ref so scroll callbacks always see latest values
+  const punchedIdsRef = useRef(punchedIds)
+  useEffect(() => {
+    punchedIdsRef.current = punchedIds
+  }, [punchedIds])
+
+  // Punch handler — callable on scroll clamp or manual tap
   const triggerPunch = useCallback((project) => {
-    if (!project || punchedIds.includes(project.id)) return
-    const nextPunched = [...punchedIds, project.id]
+    if (!project || punchedIdsRef.current.includes(project.id)) return
+    const nextPunched = [...punchedIdsRef.current, project.id]
+    punchedIdsRef.current = nextPunched
     setPunchedIds(nextPunched)
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextPunched))
-    } catch {
-      // ignore
-    }
+
+    // Play crisp physical mechanical sound effect
+    playPunchSound()
+
     setFallingDisc({
       id: `${project.id}-${Date.now()}`,
       color: project.accentColor,
     })
     setIsPunching(true)
-    setTimeout(() => setIsPunching(false), 380)
-  }, [punchedIds])
+    setTimeout(() => setIsPunching(false), 420)
+  }, [])
 
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
     const slotSize = 1 / total
@@ -85,31 +92,40 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     const currentProject = projects[currentIdx]
     const localProgress = rawSlot - currentIdx // 0.0 to 1.0 within current ticket
 
-    // Alignment coordinate:
-    // On desktop: -242px aligns the pin over the horizontal stub punch zone.
-    // On mobile: -140px brings the jaws visibly onto the mobile stub.
-    const ALIGNED_PUNCH_X = isMobile ? -140 : -242
-    const OFFSCREEN_LEFT_X = isMobile ? -420 : -650
+    // Alignment coordinate calibrated to stub crosshairs
+    const ALIGNED_PUNCH_X = isMobile ? -170 : -188
+    const OFFSCREEN_LEFT_X = isMobile ? -380 : -580
 
-    // The puncher glides in and rests over the active ticket as it comes
-    // into focus, and glides back out as the next ticket advances in. It
-    // never punches on its own — punching only happens on a deliberate
-    // click (see triggerPunch / onManualPunch), so nothing gets marked
-    // "collected" before the user has actually looked at it.
-    void currentProject
+    // Ensure all earlier tickets the user scrolled past are marked punched!
+    for (let i = 0; i < currentIdx; i++) {
+      const p = projects[i]
+      if (p && !punchedIdsRef.current.includes(p.id)) {
+        triggerPunch(p)
+      }
+    }
 
-    if (localProgress < 0.35 || localProgress > 0.85) {
+    if (localProgress < 0.36 || localProgress > 0.84) {
       setPuncherX(OFFSCREEN_LEFT_X)
-    } else if (localProgress < 0.55) {
-      const t = (localProgress - 0.35) / 0.20
+      setIsPunching(false)
+    } else if (localProgress < 0.52) {
+      const t = (localProgress - 0.36) / 0.16
       const eased = Math.sin((t * Math.PI) / 2)
       setPuncherX(OFFSCREEN_LEFT_X + eased * (ALIGNED_PUNCH_X - OFFSCREEN_LEFT_X))
-    } else if (localProgress < 0.72) {
+      setIsPunching(false)
+    } else if (localProgress < 0.74) {
+      // CLAMP DOWN! FIRM PUNCH!
       setPuncherX(ALIGNED_PUNCH_X)
+      setIsPunching(true)
+
+      // Automatic punch on clamp
+      if (currentProject && !punchedIdsRef.current.includes(currentProject.id)) {
+        triggerPunch(currentProject)
+      }
     } else {
-      const t = (localProgress - 0.72) / 0.13
+      const t = (localProgress - 0.74) / 0.10
       const eased = t * t
       setPuncherX(ALIGNED_PUNCH_X + eased * (OFFSCREEN_LEFT_X - ALIGNED_PUNCH_X))
+      setIsPunching(false)
     }
   })
 
@@ -131,7 +147,11 @@ export default function TicketStack({ projects = [], onSelectProject }) {
   }
 
   return (
-    <div ref={containerRef} className="ticket-stack-section">
+    <div
+      ref={containerRef}
+      className="ticket-stack-section"
+      style={{ height: `${Math.max(380, total * 105)}vh` }}
+    >
       {/* Pinned Stage during scroll */}
       <div className="ticket-stack-stage">
         {/* Stage Header */}
@@ -172,6 +192,7 @@ export default function TicketStack({ projects = [], onSelectProject }) {
             x={puncherX}
             isPunching={isPunching}
             active={activeTicketIndex < total}
+            isMobile={isMobile}
           />
         </div>
 

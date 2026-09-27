@@ -88,29 +88,43 @@ export default function ScrollFanCards() {
     }
 
     function renderLoop() {
-      // Smooth exponential decay lerp: 12% toward target per frame
-      currentProgress += (targetProgress - currentProgress) * 0.12
+      // Smooth exponential decay lerp: 14% toward target per frame
+      currentProgress += (targetProgress - currentProgress) * 0.14
 
       if (Math.abs(targetProgress - currentProgress) < 0.001) {
         currentProgress = targetProgress
       }
 
       const p = currentProgress
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
       const { spreadX, spreadRot, spreadY } = configRef.current
 
-      // Closed state (p = 0): tactile stacked deck with slight organic resting angles
-      // Open state (p = 1): fanned out into a 3-card spread
-      const closed = [
-        { x: -4, y: 4, rot: -2.5 },
-        { x: 0, y: 2, rot: 0.5 },
-        { x: 4, y: 0, rot: 3 },
-      ]
-
-      const open = [
-        { x: -spreadX, y: spreadY, rot: -spreadRot },
-        { x: 0, y: 0, rot: 0 },
-        { x: spreadX, y: spreadY, rot: spreadRot },
-      ]
+      let closed, open
+      if (isMobile) {
+        // Mobile: cards start gathered in a tactile deck and smoothly deal/unfurl down
+        closed = [
+          { x: 0, y: 12, rot: -3 },
+          { x: 0, y: -140, rot: 2.8 },
+          { x: 0, y: -270, rot: -2.2 },
+        ]
+        open = [
+          { x: 0, y: 0, rot: 0 },
+          { x: 0, y: 0, rot: 0 },
+          { x: 0, y: 0, rot: 0 },
+        ]
+      } else {
+        // Desktop: cards fan out horizontally into 3-card spread
+        closed = [
+          { x: -4, y: 4, rot: -2.5 },
+          { x: 0, y: 2, rot: 0.5 },
+          { x: 4, y: 0, rot: 3 },
+        ]
+        open = [
+          { x: -spreadX, y: spreadY, rot: -spreadRot },
+          { x: 0, y: 0, rot: 0 },
+          { x: spreadX, y: spreadY, rot: spreadRot },
+        ]
+      }
 
       // Interpolate between closed and open states based on progress
       const offsets = [0, 1, 2].map((i) => ({
@@ -325,15 +339,10 @@ export default function ScrollFanCards() {
               </div>
             )
 
-            // On the stacked mobile/tablet layout the scroll-linked fan
-            // transform is disabled by CSS, so give each card its own
-            // simple scroll-reveal instead of leaving it static.
-            return isStacked ? (
-              <Reveal key={item.title} delay={i * 0.08} y={24}>
+            return (
+              <Fragment key={item.title}>
                 {slot}
-              </Reveal>
-            ) : (
-              <Fragment key={item.title}>{slot}</Fragment>
+              </Fragment>
             )
           })}
         </div>
