@@ -37,10 +37,12 @@ export default function Contact() {
 
         <Reveal delay={0.3}>
           <div className="contact-cta-wrap contact-cta">
-            <a className="btn btn-dark" href={contact.cta.href}><SlideText>{contact.cta.label}</SlideText></a>
+            <a className="btn contact-cta-btn" href={contact.cta.href}>
+              <SlideText>{contact.cta.label}</SlideText>
+            </a>
             <span className="contact-cta-hand">
               <HandArrow />
-              {contact.handwritten}
+              <span>{contact.handwritten}</span>
             </span>
           </div>
         </Reveal>

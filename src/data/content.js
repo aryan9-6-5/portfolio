@@ -441,11 +441,11 @@ export const contact = {
   eyebrow: "Let's talk",
   headline: "Let's build something.",
   sub: 'Open to AI/ML and full-stack roles. The fastest way to reach me:',
-  handwritten: 'and make it real together',
+  handwritten: 'usually reply within 24h',
   links: [
     { label: 'Email', value: '965aryanhanumakonda@gmail.com', href: 'mailto:965aryanhanumakonda@gmail.com', icon: 'mail' },
     { label: 'GitHub', value: 'github.com/aryan9-6-5', href: 'https://github.com/aryan9-6-5', icon: 'github' },
     { label: 'LinkedIn', value: 'linkedin.com/in/aryan965', href: 'https://linkedin.com/in/aryan965', icon: 'linkedin' },
   ],
-  cta: { label: 'Get in Touch', href: 'mailto:965aryanhanumakonda@gmail.com' },
+  cta: { label: 'Say hello directly', href: 'mailto:965aryanhanumakonda@gmail.com' },
 }
