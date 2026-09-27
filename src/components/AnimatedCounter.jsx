@@ -7,7 +7,7 @@ export default function AnimatedCounter({ value, className }) {
   const suffix = match ? match[2] : ''
 
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.5 })
+  const inView = useInView(ref, { once: true, amount: 0.1 })
   const [display, setDisplay] = useState(0)
 
   useEffect(() => {

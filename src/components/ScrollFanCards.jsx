@@ -1,7 +1,8 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback, Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import { quickLinks } from '../data/content.js'
 import { ICONS, IconArrow } from './icons.jsx'
+import Reveal from './Reveal.jsx'
 
 /**
  * ScrollFanCards
@@ -20,6 +21,17 @@ export default function ScrollFanCards() {
   const containerRef = useRef(null)
   const cardRefs = [useRef(null), useRef(null), useRef(null)]
   const [hoveredCard, setHoveredCard] = useState(null)
+  // Below tablet width the fan deck collapses to a plain stacked column
+  // (see the final responsive pass in styles.css) — the scroll-linked fan
+  // transform no longer applies there, so give the stack its own simple
+  // scroll-reveal instead of leaving the cards static.
+  const [isStacked, setIsStacked] = useState(() => (typeof window !== 'undefined' ? window.innerWidth <= 900 : false))
+
+  useEffect(() => {
+    function onResize() { setIsStacked(window.innerWidth <= 900) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   // Track responsive fan targets
   const configRef = useRef({
@@ -276,14 +288,13 @@ export default function ScrollFanCards() {
             const hoverStyle = getHoverStyle(i)
             const isHovered = hoveredCard === i
 
-            return (
+            const slot = (
               <div
-                key={item.title}
                 ref={cardRefs[i]}
                 className={`scroll-fan-slot slot-${i} ${isHovered ? 'is-hovered' : ''}`}
                 style={{ zIndex: hoverStyle.zIndex }}
               >
-                {/* 
+                {/*
                   Outer slot carries scrollTransform (--scroll-x, --scroll-y, --scroll-rot).
                   Inner card carries hoverTransform (--hover-x, --hover-y, --hover-scale, --hover-rot).
                   Combined via CSS: finalTransform = scrollTransform × hoverTransform.
@@ -312,6 +323,17 @@ export default function ScrollFanCards() {
                   </Link>
                 </div>
               </div>
+            )
+
+            // On the stacked mobile/tablet layout the scroll-linked fan
+            // transform is disabled by CSS, so give each card its own
+            // simple scroll-reveal instead of leaving it static.
+            return isStacked ? (
+              <Reveal key={item.title} delay={i * 0.08} y={24}>
+                {slot}
+              </Reveal>
+            ) : (
+              <Fragment key={item.title}>{slot}</Fragment>
             )
           })}
         </div>

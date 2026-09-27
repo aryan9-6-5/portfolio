@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
 // Full-hero interactive image/color grid
-// Tiles near the cursor magnify, brighten, and gently shift; tiles further away settle back.
-// Generates enough rows & columns to completely cover the entire hero section on all viewports.
+// PC/Desktop: Dual-mode — Ambient automatic flowing motion when idle,
+// and real-time interactive magnification/brightening/nudge when cursor moves!
+// Mobile/Tablet: Ambient automatic flowing motion + responsive touch ripples.
 const PALETTES = {
   blue: [
     '#E3F2FF', '#C7D9FC', '#A9C2FB', '#8CAAF5',
@@ -21,7 +22,7 @@ const PALETTES = {
     '#C7D2FE', '#818CF8', '#E9D5FF', '#7C3AED'
   ],
 }
-const RADIUS = 220
+const RADIUS = 230
 const PUSH = 14
 
 function Tile({ tileData, index, registerRef }) {
@@ -56,6 +57,10 @@ export default function HeroImageGrid({ theme = 'blue' }) {
   const containerRef = useRef(null)
   const entriesRef = useRef([])
   const centersRef = useRef([])
+
+  // User interaction tracking (both mouse and touch)
+  const userInputRef = useRef({ x: -1000, y: -1000, active: false })
+  const lastInputTimeRef = useRef(0)
 
   // Dynamically compute enough tiles so all columns and rows are completely filled
   const [tileCount, setTileCount] = useState(() => {
@@ -92,7 +97,7 @@ export default function HeroImageGrid({ theme = 'blue' }) {
     entriesRef.current[index] = { el, scale, bright, offsetX, offsetY }
   }
 
-  // Pre-calculate centers on mount, resize, and scroll to avoid layout thrashing during mouse movement
+  // Pre-calculate centers on mount, resize, and scroll to avoid layout thrashing
   function updateCenters() {
     centersRef.current = entriesRef.current.map((item) => {
       if (!item?.el) return null
@@ -100,6 +105,40 @@ export default function HeroImageGrid({ theme = 'blue' }) {
       return { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 }
     })
   }
+
+  // Apply ripple effect from any coordinates
+  const applyRipple = useCallback((clientX, clientY) => {
+    if (!centersRef.current.length) {
+      updateCenters()
+    }
+    const centers = centersRef.current
+    const entries = entriesRef.current
+    const len = Math.min(entries.length, centers.length)
+
+    for (let i = 0; i < len; i++) {
+      const item = entries[i]
+      const center = centers[i]
+      if (!item || !center) continue
+
+      const dx = center.cx - clientX
+      const dy = center.cy - clientY
+      const dist = Math.hypot(dx, dy)
+      if (dist < RADIUS) {
+        const push = 1 - dist / RADIUS
+        item.scale.set(1 + push * 0.52)
+        item.bright.set(1 + push * 0.38)
+        if (dist > 0.01) {
+          item.offsetX.set((dx / dist) * push * PUSH)
+          item.offsetY.set((dy / dist) * push * PUSH)
+        }
+      } else {
+        item.scale.set(1)
+        item.bright.set(1)
+        item.offsetX.set(0)
+        item.offsetY.set(0)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const el = containerRef.current
@@ -134,51 +173,75 @@ export default function HeroImageGrid({ theme = 'blue' }) {
     return () => clearTimeout(t)
   }, [tileCount])
 
+  // Combined Ambient Moving Loop + Interactive Cursor Ripple
   useEffect(() => {
-    let raf = null
-    function onMove(e) {
-      if (raf) return
-      raf = requestAnimationFrame(() => {
-        raf = null
-        if (!centersRef.current.length) {
-          updateCenters()
-        }
-        const centers = centersRef.current
-        const entries = entriesRef.current
-        const len = Math.min(entries.length, centers.length)
+    let rafId = null
+    const startTime = Date.now()
 
-        for (let i = 0; i < len; i++) {
-          const item = entries[i]
-          const center = centers[i]
-          if (!item || !center) continue
+    function animLoop() {
+      const now = Date.now()
+      const elapsed = (now - startTime) / 1000
+      const isUserActive = userInputRef.current.active && (now - lastInputTimeRef.current < 1400)
 
-          const dx = center.cx - e.clientX
-          const dy = center.cy - e.clientY
-          const dist = Math.hypot(dx, dy)
-          if (dist < RADIUS) {
-            const push = 1 - dist / RADIUS
-            item.scale.set(1 + push * 0.5)
-            item.bright.set(1 + push * 0.35)
-            if (dist > 0.01) {
-              item.offsetX.set((dx / dist) * push * PUSH)
-              item.offsetY.set((dy / dist) * push * PUSH)
-            }
-          } else {
-            item.scale.set(1)
-            item.bright.set(1)
-            item.offsetX.set(0)
-            item.offsetY.set(0)
-          }
+      if (isUserActive) {
+        // User is actively moving mouse cursor or touching
+        applyRipple(userInputRef.current.x, userInputRef.current.y)
+      } else {
+        // Ambient automatic flowing motion
+        const el = containerRef.current
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          const centerX = rect.left + rect.width / 2
+          const centerY = rect.top + rect.height / 2
+          const radiusX = rect.width * 0.3
+          const radiusY = rect.height * 0.25
+
+          const speed = 0.36
+          const vx = centerX + Math.sin(elapsed * speed) * radiusX
+          const vy = centerY + Math.sin(elapsed * speed * 1.35 + 0.5) * radiusY
+
+          applyRipple(vx, vy)
         }
-      })
+      }
+
+      rafId = requestAnimationFrame(animLoop)
     }
 
-    window.addEventListener('mousemove', onMove, { passive: true })
+    function onMouseMove(e) {
+      userInputRef.current = { x: e.clientX, y: e.clientY, active: true }
+      lastInputTimeRef.current = Date.now()
+    }
+
+    function onTouchMove(e) {
+      if (e.touches && e.touches[0]) {
+        userInputRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, active: true }
+        lastInputTimeRef.current = Date.now()
+      }
+    }
+
+    function onMouseLeave() {
+      userInputRef.current.active = false
+    }
+
+    // Always register mousemove so PC cursor animation is 100% active
+    window.addEventListener('mousemove', onMouseMove, { passive: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: true })
+    document.addEventListener('mouseleave', onMouseLeave)
+
+    // Start loop
+    const timer = setTimeout(() => {
+      updateCenters()
+      rafId = requestAnimationFrame(animLoop)
+    }, 200)
+
     return () => {
-      window.removeEventListener('mousemove', onMove)
-      if (raf) cancelAnimationFrame(raf)
+      clearTimeout(timer)
+      if (rafId) cancelAnimationFrame(rafId)
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('touchmove', onTouchMove)
+      document.removeEventListener('mouseleave', onMouseLeave)
     }
-  }, [])
+  }, [applyRipple])
 
   return (
     <div ref={containerRef} className="hero-grid" aria-hidden="true">

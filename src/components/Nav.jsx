@@ -9,19 +9,28 @@ import DrawUnderline from './DrawUnderline.jsx'
 export default function Nav() {
   const [sticky, setSticky] = useState(false)
   const [open, setOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 810 : false))
 
   useEffect(() => {
     function onScroll() { setSticky(window.scrollY > 40) }
+    function onResize() { setIsMobile(window.innerWidth < 810) }
+
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+    }
   }, [])
+
+  const paddingY = isMobile ? (sticky ? 8 : 12) : (sticky ? 12 : 28)
 
   return (
     <>
       <header className={`site-header${sticky ? ' sticky' : ''}`}>
         <motion.div
           className="header-inner"
-          animate={{ paddingTop: sticky ? 12 : 28, paddingBottom: sticky ? 12 : 28 }}
+          animate={{ paddingTop: paddingY, paddingBottom: paddingY }}
           transition={{ type: 'spring', duration: 0.8, bounce: 0.2 }}
         >
           <Link to="/" className="header-logo" onClick={() => setOpen(false)}>

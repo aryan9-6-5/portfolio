@@ -20,9 +20,9 @@ export default function CustomCursor() {
   const ringY = useSpring(mouseY, { stiffness: 350, damping: 28, mass: 0.5 })
 
   useEffect(() => {
-    // Only enable on desktop pointer devices
-    const isTouch = window.matchMedia('(pointer: coarse)').matches
-    if (isTouch) return
+    // Only disable if device is strictly touch-only without any fine pointer
+    const isTouchOnly = window.matchMedia('(pointer: coarse) and (hover: none)').matches
+    if (isTouchOnly) return
 
     function handleMouseMove(e) {
       mouseX.set(e.clientX)
@@ -34,7 +34,7 @@ export default function CustomCursor() {
       if (!target) return
 
       const interactive = target.closest(
-        'a, button, input, textarea, select, [role="button"], .btn, .arrow-btn, .clickable, .collectible-ticket, .cert-flip-container, .stats-score-card, .stage-card-motion, .ticket-punch-stamp, .scroll-fan-card, .showcase-item, .project-modal-close'
+        'a, button, input, textarea, select, [role="button"], .btn, .arrow-btn, .clickable, .collectible-ticket, .cert-flip-container, .stats-score-card, .stage-card-motion, .ticket-punch-stamp, .scroll-fan-card, .showcase-item, .project-modal-close, .strengths-title-btn'
       )
 
       if (interactive) {

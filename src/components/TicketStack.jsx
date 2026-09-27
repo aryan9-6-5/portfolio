@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion'
 import ProjectTicket from './ProjectTicket.jsx'
 import TicketPuncher from './TicketPuncher.jsx'
@@ -26,18 +26,28 @@ export default function TicketStack({ projects = [], onSelectProject }) {
   const containerRef = useRef(null)
   const total = projects.length
 
-  // Persisted set of punched project IDs
-  const [punchedIds, setPunchedIds] = useState(() => {
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth <= 900 : false))
+
+  useEffect(() => {
+    function onResize() { setIsMobile(window.innerWidth <= 900) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Active set of punched project IDs (starts clean so no ticket is pre-punched before reaching it)
+  const [punchedIds, setPunchedIds] = useState([])
+
+  useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY)
-      return saved ? JSON.parse(saved) : []
+      localStorage.removeItem(STORAGE_KEY)
     } catch {
-      return []
+      // ignore
     }
-  })
+  }, [])
 
   // Dynamic state for mechanical puncher
-  const [puncherX, setPuncherX] = useState(-650)
+  const defaultOffscreen = isMobile ? -420 : -650
+  const [puncherX, setPuncherX] = useState(defaultOffscreen)
   const [isPunching, setIsPunching] = useState(false)
   const [activeTicketIndex, setActiveTicketIndex] = useState(0)
   const [fallingDisc, setFallingDisc] = useState(null)
@@ -47,6 +57,24 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     target: containerRef,
     offset: ['start start', 'end end'],
   })
+
+  // Punch handler — fires only on a deliberate click of the punch target.
+  const triggerPunch = useCallback((project) => {
+    if (!project || punchedIds.includes(project.id)) return
+    const nextPunched = [...punchedIds, project.id]
+    setPunchedIds(nextPunched)
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextPunched))
+    } catch {
+      // ignore
+    }
+    setFallingDisc({
+      id: `${project.id}-${Date.now()}`,
+      color: project.accentColor,
+    })
+    setIsPunching(true)
+    setTimeout(() => setIsPunching(false), 380)
+  }, [punchedIds])
 
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
     const slotSize = 1 / total
@@ -58,57 +86,30 @@ export default function TicketStack({ projects = [], onSelectProject }) {
     const localProgress = rawSlot - currentIdx // 0.0 to 1.0 within current ticket
 
     // Alignment coordinate:
-    // With puncher viewBox width 360 and punch pin at x=304,
-    // positioning puncher at x = -242px aligns the pin over the ticket's stub punch zone!
-    const ALIGNED_PUNCH_X = -242
-    const OFFSCREEN_LEFT_X = -650
+    // On desktop: -242px aligns the pin over the horizontal stub punch zone.
+    // On mobile: -140px brings the jaws visibly onto the mobile stub.
+    const ALIGNED_PUNCH_X = isMobile ? -140 : -242
+    const OFFSCREEN_LEFT_X = isMobile ? -420 : -650
 
-    // Punch sequence timeline within current ticket slot:
-    // 0.00 - 0.38: Ticket active, puncher rests off-screen left
-    // 0.38 - 0.58: Puncher enters from left smoothly and aligns jaws on ticket
-    // 0.58 - 0.72: Puncher clamps down firmly! Hole punches through! Paper disc drops!
-    // 0.72 - 0.84: Puncher unclamps and retracts back toward left
-    // 0.84 - 1.00: Ticket lifts up and slides back, next card advances forward into focus
+    // The puncher glides in and rests over the active ticket as it comes
+    // into focus, and glides back out as the next ticket advances in. It
+    // never punches on its own — punching only happens on a deliberate
+    // click (see triggerPunch / onManualPunch), so nothing gets marked
+    // "collected" before the user has actually looked at it.
+    void currentProject
 
-    if (localProgress < 0.38) {
+    if (localProgress < 0.35 || localProgress > 0.85) {
       setPuncherX(OFFSCREEN_LEFT_X)
-      setIsPunching(false)
-    } else if (localProgress >= 0.38 && localProgress < 0.58) {
-      // Entering from left
-      const t = (localProgress - 0.38) / 0.20
-      const eased = Math.sin((t * Math.PI) / 2) // smooth deceleration
+    } else if (localProgress < 0.55) {
+      const t = (localProgress - 0.35) / 0.20
+      const eased = Math.sin((t * Math.PI) / 2)
       setPuncherX(OFFSCREEN_LEFT_X + eased * (ALIGNED_PUNCH_X - OFFSCREEN_LEFT_X))
-      setIsPunching(false)
-    } else if (localProgress >= 0.58 && localProgress < 0.72) {
-      // Clamping firmly over the punch target!
+    } else if (localProgress < 0.72) {
       setPuncherX(ALIGNED_PUNCH_X)
-      setIsPunching(true)
-
-      // Record punch once
-      if (currentProject && !punchedIds.includes(currentProject.id)) {
-        const nextPunched = [...punchedIds, currentProject.id]
-        setPunchedIds(nextPunched)
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextPunched))
-        } catch {
-          // ignore
-        }
-
-        // Trigger paper circle falling animation
-        setFallingDisc({
-          id: `${currentProject.id}-${Date.now()}`,
-          color: currentProject.accentColor,
-        })
-      }
-    } else if (localProgress >= 0.72 && localProgress < 0.84) {
-      // Retracting back to off-screen left
-      const t = (localProgress - 0.72) / 0.12
-      const eased = t * t // smooth acceleration away
-      setPuncherX(ALIGNED_PUNCH_X + eased * (OFFSCREEN_LEFT_X - ALIGNED_PUNCH_X))
-      setIsPunching(false)
     } else {
-      setPuncherX(OFFSCREEN_LEFT_X)
-      setIsPunching(false)
+      const t = (localProgress - 0.72) / 0.13
+      const eased = t * t
+      setPuncherX(ALIGNED_PUNCH_X + eased * (OFFSCREEN_LEFT_X - ALIGNED_PUNCH_X))
     }
   })
 
@@ -160,6 +161,7 @@ export default function TicketStack({ projects = [], onSelectProject }) {
                   isCurrentlyPunching={isCurrentlyPunching}
                   scrollYProgress={scrollYProgress}
                   onSelect={onSelectProject}
+                  onManualPunch={() => triggerPunch(project)}
                 />
               )
             })}
@@ -207,6 +209,7 @@ function TicketSlot({
   isCurrentlyPunching,
   scrollYProgress,
   onSelect,
+  onManualPunch,
 }) {
   const isLast = index === total - 1
   const slotSize = 1 / total
@@ -214,8 +217,8 @@ function TicketSlot({
   const slotEnd = (index + 1) * slotSize
 
   // Transition phase when card lifts up and deck advances:
-  // Starts at 82% of slot and finishes at slotEnd
-  const transStart = slotEnd - slotSize * 0.18
+  // Starts at 85% of slot and finishes at slotEnd
+  const transStart = slotEnd - slotSize * 0.15
   const transEnd = slotEnd
 
   // Opacity: Card remains visible in stack, and when punched & departing, fades smoothly
@@ -229,8 +232,8 @@ function TicketSlot({
   const scale = useTransform(
     scrollYProgress,
     isLast
-      ? [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, 1.0]
-      : [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, transStart, transEnd],
+      ? [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, 1.0]
+      : [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, transStart, transEnd],
     isLast
       ? [0.94, 0.96, 1.0, 1.0]
       : [0.92, 0.96, 1.0, 1.0, 0.88]
@@ -240,24 +243,21 @@ function TicketSlot({
   const y = useTransform(
     scrollYProgress,
     isLast
-      ? [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, 1.0]
-      : [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, transStart, transEnd],
+      ? [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, 1.0]
+      : [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, transStart, transEnd],
     isLast
-      ? [index * 18, (index - 1) * 18, 0, 0]
-      : [index * 18, (index - 1) * 18, 0, 0, -150]
+      ? [index * 16, (index - 1) * 16, 0, 0]
+      : [index * 16, (index - 1) * 16, 0, 0, -140]
   )
 
-  // Natural tilt / rotation:
-  // Waiting cards have realistic natural tilt (+2.4deg, -2.8deg), then straighten to 0deg when active,
-  // then lift away with slight reverse tilt
   const initialRotate = STACK_PRESETS[index % STACK_PRESETS.length].rotate
   const initialX = STACK_PRESETS[index % STACK_PRESETS.length].x
 
   const rotate = useTransform(
     scrollYProgress,
     isLast
-      ? [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, 1.0]
-      : [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, transStart, transEnd],
+      ? [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, 1.0]
+      : [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, transStart, transEnd],
     isLast
       ? [initialRotate, initialRotate * 0.5, 0, 0]
       : [initialRotate, initialRotate * 0.5, 0, 0, -4]
@@ -266,14 +266,13 @@ function TicketSlot({
   const x = useTransform(
     scrollYProgress,
     isLast
-      ? [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, 1.0]
-      : [0, Math.max(0, slotStart - slotSize * 0.18), slotStart, transStart, transEnd],
+      ? [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, 1.0]
+      : [0, Math.max(0, slotStart - slotSize * 0.15), slotStart, transStart, transEnd],
     isLast
       ? [initialX, initialX * 0.5, 0, 0]
       : [initialX, initialX * 0.5, 0, 0, -10]
   )
 
-  // Dynamic z-index layering so active ticket sits on top, waiting tickets beneath
   const zIndex = total - index
 
   return (
@@ -290,9 +289,11 @@ function TicketSlot({
     >
       <ProjectTicket
         project={project}
+        total={total}
         isPunched={isPunched}
         isCurrentlyPunching={isCurrentlyPunching}
         onSelect={onSelect}
+        onManualPunch={onManualPunch}
       />
     </motion.div>
   )

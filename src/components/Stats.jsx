@@ -41,7 +41,7 @@ function CardIcon({ type }) {
 
 export default function Stats() {
   return (
-    <section className="section stats-cards-section">
+    <section id="stats" className="section stats-cards-section">
       <div className="container">
         <Reveal className="section-head stats-cards-head" y={10}>
           <h2 className="heading-1">{stats.heading}</h2>

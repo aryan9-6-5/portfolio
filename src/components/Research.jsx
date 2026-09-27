@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Reveal from './Reveal.jsx'
@@ -384,14 +384,22 @@ const CARDS_DATA = [
   { id: 'error', title: 'Does AI Know It Lies?', Component: ResidualProbeCardFaces },
 ]
 
-const SPREAD_X = 395
+// Full 395px spread only fits once the container reaches --max-desktop
+// (1200px, at 1300px+ viewports). Below that the container caps at
+// --max-tablet (1040px) and a 395px spread pushed the flank cards past
+// the right edge of the viewport — a real horizontal-overflow bug at
+// common laptop widths (900-1299px), not just small screens.
+function getSpreadX() {
+  if (typeof window === 'undefined') return 395
+  return window.innerWidth >= 1300 ? 395 : 300
+}
 
-function getCardPlacement(index, selected) {
+function getCardPlacement(index, selected, spreadX) {
   // Resting default state: 3 cards side by side on desk
   if (selected === null) {
-    if (index === 0) return { x: -SPREAD_X, y: 0, scale: 1, isFlipped: false, zIndex: 10, opacity: 1, isActive: false }
+    if (index === 0) return { x: -spreadX, y: 0, scale: 1, isFlipped: false, zIndex: 10, opacity: 1, isActive: false }
     if (index === 1) return { x: 0, y: 0, scale: 1, isFlipped: false, zIndex: 12, opacity: 1, isActive: false }
-    if (index === 2) return { x: SPREAD_X, y: 0, scale: 1, isFlipped: false, zIndex: 10, opacity: 1, isActive: false }
+    if (index === 2) return { x: spreadX, y: 0, scale: 1, isFlipped: false, zIndex: 10, opacity: 1, isActive: false }
   }
 
   // Active card: Centers itself (x = 0), lifts up (y = -16), scales up (scale = 1.07), flips, stays on top
@@ -407,18 +415,18 @@ function getCardPlacement(index, selected) {
     }
   }
 
-  // Non-selected cards: Symmetrically push to flanks (±SPREAD_X), drop downward (y = 22), scale down (scale = 0.82), dim (opacity = 0.45)
+  // Non-selected cards: Symmetrically push to flanks (±spreadX), drop downward (y = 22), scale down (scale = 0.82), dim (opacity = 0.45)
   if (selected === 0) {
-    if (index === 1) return { x: SPREAD_X, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
-    if (index === 2) return { x: -SPREAD_X, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
+    if (index === 1) return { x: spreadX, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
+    if (index === 2) return { x: -spreadX, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
   }
   if (selected === 1) {
-    if (index === 0) return { x: -SPREAD_X, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
-    if (index === 2) return { x: SPREAD_X, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
+    if (index === 0) return { x: -spreadX, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
+    if (index === 2) return { x: spreadX, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
   }
   if (selected === 2) {
-    if (index === 0) return { x: -SPREAD_X, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
-    if (index === 1) return { x: SPREAD_X, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
+    if (index === 0) return { x: -spreadX, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
+    if (index === 1) return { x: spreadX, y: 22, scale: 0.82, isFlipped: false, zIndex: 10, opacity: 0.45, isActive: false }
   }
 
   return { x: 0, y: 0, scale: 1, isFlipped: false, zIndex: 10, opacity: 1, isActive: false }
@@ -428,6 +436,13 @@ function getCardPlacement(index, selected) {
 export default function Research() {
   const [selected, setSelected] = useState(null)
   const [mobileFlipped, setMobileFlipped] = useState({ 0: false, 1: false, 2: false })
+  const [spreadX, setSpreadX] = useState(getSpreadX)
+
+  useEffect(() => {
+    function onResize() { setSpreadX(getSpreadX()) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   const handleCardClick = (index) => {
     if (selected === index) {
@@ -458,7 +473,7 @@ export default function Research() {
         {/* ── DESKTOP 3D SWAP & FLIP STAGE ── */}
         <div className="desktop-torn-stage-container" aria-label="Interactive research notes desk">
           {CARDS_DATA.map((card, index) => {
-            const placement = getCardPlacement(index, selected)
+            const placement = getCardPlacement(index, selected, spreadX)
             const CardFaces = card.Component
 
             return (

@@ -19,9 +19,10 @@ export function ProjectList({ items }) {
     <>
       <div className="collectible-tickets-grid">
         {items.map((item) => (
-          <div key={item.name} className="ticket-grid-item">
+          <div key={item.name} id={item.id} className="ticket-grid-item">
             <ProjectTicket
               project={item}
+              total={items.length}
               isPunched={true}
               onSelect={(p) => setSelected(p)}
             />

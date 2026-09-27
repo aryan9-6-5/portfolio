@@ -8,7 +8,7 @@ export default function CoreStrengths() {
   // Lock on strength index 0 by default so the right-side space is utilized immediately
   const [selected, setSelected] = useState(0)
   const [hovered, setHovered] = useState(null)
-  const [tapped, setTapped] = useState(null)
+  const [tapped, setTapped] = useState(0)
 
   // Active item to display in the right-hand showcase layer:
   // If user is hovering a row, preview it; otherwise show the selected (clicked) strength
@@ -32,6 +32,7 @@ export default function CoreStrengths() {
               const isSelected = selected === i
               const isHovered = hovered === i
               const isDimmed = (hovered !== null && !isHovered) || (hovered === null && selected !== null && !isSelected)
+              const isOpen = tapped === i
 
               return (
                 <div key={item.title} className="strengths-row">
@@ -41,7 +42,7 @@ export default function CoreStrengths() {
                     onMouseEnter={() => setHovered(i)}
                     onMouseLeave={() => setHovered(null)}
                     onClick={() => {
-                      setSelected(selected === i ? null : i)
+                      setSelected(i)
                       setTapped(tapped === i ? null : i)
                     }}
                     aria-label={`Strength: ${item.title}. Click to view proof story.`}
@@ -56,13 +57,13 @@ export default function CoreStrengths() {
                     <div className="strengths-btn-right">
                       <span className="strengths-metric-pill">{item.metric}</span>
                       <span className="strengths-select-arrow">
-                        {isSelected ? '●' : '→'}
+                        {isOpen ? '●' : '→'}
                       </span>
                     </div>
                   </button>
 
                   {/* Mobile Accordion */}
-                  <div className={`strengths-inline-story ${tapped === i ? 'open' : ''}`}>
+                  <div className={`strengths-inline-story ${isOpen ? 'open' : ''}`}>
                     <div className="mobile-story-inner">
                       <span className="mobile-story-tag">{item.tag}</span>
                       <p>{item.story}</p>

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { about, coding } from '../data/content.js'
 import Reveal from './Reveal.jsx'
@@ -25,7 +25,7 @@ function ThoughtCloudTail({ position = 'bottom-right' }) {
   )
 }
 
-function PinnedThoughtCloud({ item, index, scrollYProgress }) {
+function PinnedThoughtCloud({ item, index, scrollYProgress, isStacked }) {
   // Determine position in the 4-corner layout around the standing character
   // Index 0: Top-Left
   // Index 1: Top-Right
@@ -68,7 +68,7 @@ function PinnedThoughtCloud({ item, index, scrollYProgress }) {
   // Only active/visible clouds receive pointer events
   const pointerEvents = useTransform(opacity, (val) => (val > 0.4 ? 'auto' : 'none'))
 
-  return (
+  const card = (
     <motion.div
       className={`pinned-thought-cloud-item ${posClass}`}
       style={{ opacity, scale, y, pointerEvents }}
@@ -83,10 +83,31 @@ function PinnedThoughtCloud({ item, index, scrollYProgress }) {
       </div>
     </motion.div>
   )
+
+  // On the stacked mobile/tablet layout the corner-popup scroll transform
+  // is neutralized by CSS (see the final responsive pass in styles.css),
+  // so give each card its own simple scroll-reveal instead of leaving it
+  // static in the middle of a red section.
+  if (!isStacked) return card
+  return (
+    <Reveal delay={index * 0.06} y={24}>
+      {card}
+    </Reveal>
+  )
 }
 
 export default function About() {
   const containerRef = useRef(null)
+
+  // Below tablet width the pinned scroll-jack collapses to a plain
+  // stacked column (see the final responsive pass in styles.css).
+  const [isStacked, setIsStacked] = useState(() => (typeof window !== 'undefined' ? window.innerWidth <= 900 : false))
+
+  useEffect(() => {
+    function onResize() { setIsStacked(window.innerWidth <= 900) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   // Track scroll through the pinned runway
   const { scrollYProgress } = useScroll({
@@ -120,6 +141,7 @@ export default function About() {
                 item={item}
                 index={index}
                 scrollYProgress={scrollYProgress}
+                isStacked={isStacked}
               />
             ))}
           </div>

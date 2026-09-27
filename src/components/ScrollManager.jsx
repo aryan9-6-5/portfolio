@@ -17,10 +17,30 @@ export default function ScrollManager() {
   useEffect(() => {
     if (hash) {
       const id = hash.slice(1)
-      const raf = requestAnimationFrame(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-      })
-      return () => cancelAnimationFrame(raf)
+      let attempts = 0
+      let timeoutId = null
+
+      // Heavy pinned/scroll-jacked sections above the target can still be
+      // laying out (images, fonts) right after a route change, so a single
+      // rAF scrollIntoView can land short. Retry briefly until the element
+      // is actually present and stops moving before giving up.
+      const tryScroll = () => {
+        const el = document.getElementById(id)
+        attempts += 1
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' })
+          if (attempts < 6) {
+            timeoutId = setTimeout(tryScroll, 150)
+          }
+          return
+        }
+        if (attempts < 10) {
+          timeoutId = setTimeout(tryScroll, 100)
+        }
+      }
+
+      timeoutId = setTimeout(tryScroll, 0)
+      return () => clearTimeout(timeoutId)
     }
     window.scrollTo({ top: 0 })
   }, [pathname, hash])

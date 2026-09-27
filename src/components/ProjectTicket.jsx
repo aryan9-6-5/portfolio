@@ -10,9 +10,11 @@ import { projects } from '../data/content.js'
  */
 export default function ProjectTicket({
   project,
+  total,
   isPunched = false,
   isCurrentlyPunching = false,
   onSelect,
+  onManualPunch,
 }) {
   const {
     ticketNo,
@@ -59,7 +61,16 @@ export default function ProjectTicket({
         </div>
 
         {/* PHYSICAL PUNCH HOLE TARGET */}
-        <div className="punch-target-area">
+        <div
+          className="punch-target-area"
+          onClick={() => {
+            if (!isPunched && onManualPunch) onManualPunch()
+          }}
+          role="button"
+          tabIndex={0}
+          title={isPunched ? 'Ticket punched' : 'Click to punch ticket'}
+          style={{ cursor: isPunched ? 'default' : 'pointer' }}
+        >
           {isPunched ? (
             <motion.div
               className="punched-hole-cutout"
@@ -121,7 +132,7 @@ export default function ProjectTicket({
 
           <div className="ticket-serial-badge">
             <span className="serial-dot" style={{ backgroundColor: accentColor }} />
-            TICKET #{ticketNo} / {String(projects.items.length).padStart(2, '0')}
+            TICKET #{ticketNo} / {String(total || projects.items.length).padStart(2, '0')}
           </div>
         </div>
 

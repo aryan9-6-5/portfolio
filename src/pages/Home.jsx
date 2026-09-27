@@ -6,6 +6,7 @@ import Research from '../components/Research.jsx'
 import CoreStrengths from '../components/CoreStrengths.jsx'
 import Stats from '../components/Stats.jsx'
 import Certifications from '../components/Certifications.jsx'
+import Contact from '../components/Contact.jsx'
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <CoreStrengths />
       <Stats />
       <Certifications />
+      <Contact />
     </>
   )
 }

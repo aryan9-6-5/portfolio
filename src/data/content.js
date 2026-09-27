@@ -425,7 +425,7 @@ export const coreStrengths = {
       tag: 'VITALWATCH // MULTI-AGENT ML',
       metric: 'Llama-3.3 + 2 ML Models',
       story: "VitalWatch's agents had to agree with each other before the risk score ever reached a clinician. Getting Groq/Llama-3.3 reasoning and two separate ML models to stop contradicting each other was the actual hard part — not the pipeline diagram.",
-      link: '/projects',
+      link: '/projects#vitalwatch',
       color: 'blue',
     },
     {
@@ -435,7 +435,7 @@ export const coreStrengths = {
       tag: 'PLATTR // SYSTEM ARCHITECTURE',
       metric: '3 Integrated Order Engines',
       story: "The hard part of Plattr wasn't the schema — it was making a tiffin subscription, a bulk order, and a catered event feel like one app instead of three stitched together. That's a UX problem, not a database problem.",
-      link: '/projects',
+      link: '/projects#plattr',
       color: 'yellow',
     },
     {
@@ -445,7 +445,7 @@ export const coreStrengths = {
       tag: 'NEXUSMART // ANALYTICAL ENGINE',
       metric: '31.8M+ Rows Benchmarked',
       story: "31.8M+ rows stops being an 'add an index' problem fast. Swapping NexusMart's query engine for DuckDB + Polars was the boring, correct fix most people skip because rewriting the pipeline is annoying.",
-      link: '/projects',
+      link: '/projects#nexusmart',
       color: 'pink',
     },
     {
@@ -455,7 +455,7 @@ export const coreStrengths = {
       tag: 'NEUROPLASTIC // EEG RESEARCH',
       metric: 'Honest Empirical Null',
       story: "NeuroPlastic's online adaptation lost to the frozen baseline (0.717 vs 0.692 AUROC). That result went in the writeup exactly as measured — no reframing it after the fact.",
-      link: '#research',
+      link: '/#research',
       color: 'purple',
     },
     {
@@ -465,7 +465,7 @@ export const coreStrengths = {
       tag: 'FINTRACK // CLOUD INFRA',
       metric: 'AWS EC2 • Live Auth & Fraud',
       story: "The gap between a fintrack demo and fintrack in production is auth, fraud detection, and an actual AWS EC2 deploy target. All three are live, not roadmap items.",
-      link: '/projects',
+      link: '/projects#fintrack',
       color: 'green',
     },
     {
@@ -475,7 +475,7 @@ export const coreStrengths = {
       tag: 'ALGORITHMS // HACKATHONS',
       metric: 'Salesforce Runner-Up 2026',
       story: '234+ LeetCode, 230+ GeeksforGeeks, runner-up at the Salesforce Agentforce Hackathon 2026. Keeping score is half the motivation.',
-      link: '/contact',
+      link: '/#stats',
       color: 'blue',
     },
   ],
