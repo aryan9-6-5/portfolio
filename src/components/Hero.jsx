@@ -25,7 +25,16 @@ export default function Hero() {
       <div className="hero-wrap">
 
         <h1 className="display-1 hero-headline">
-          <AnimatedWords text={hero.headlinePre.trim()} delayChildren={0.1} />{' '}
+          <AnimatedWords text={hero.headlinePre.trim()} delayChildren={0.1} />
+          <motion.span
+            className="hero-avatar"
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', duration: 0.8, bounce: 0.3, delay: 0.25 }}
+            whileHover={{ scale: 1.15, rotate: 6 }}
+          >
+            <img src="/mascot/hero-avatar.png" alt="Aryan avatar" />
+          </motion.span>
           <AnimatedWords text={`${hero.headlineAccent} ${hero.headlinePost}`} delayChildren={0.32} />
         </h1>
 
