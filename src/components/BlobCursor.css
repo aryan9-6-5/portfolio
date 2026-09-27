@@ -1,0 +1,32 @@
+.blob-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.blob-main {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+}
+
+.blob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+  transform: translate(-50%, -50%);
+}
+
+.inner-dot {
+  position: absolute;
+}
+
+@media (max-width: 809px), (hover: none) and (pointer: coarse) {
+  .blob-container { display: none; }
+}

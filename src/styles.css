@@ -255,7 +255,15 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   -webkit-backdrop-filter: blur(16px);
   border-color: rgba(29, 29, 29, 0.5);
 }
-.header-logo { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+.header-logo { position: relative; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+.logo-mascot {
+  position: absolute;
+  bottom: 100%;
+  left: -2px;
+  width: 42px;
+  pointer-events: none;
+}
+.logo-mascot img { display: block; width: 100%; height: auto; }
 .header-nav { display: none; gap: 32px; list-style: none; margin: 0; padding: 0; }
 .header-nav a { font-size: 18px; font-weight: 525; letter-spacing: -0.02em; }
 .header-nav a.active .draw-underline-text { text-decoration: underline; text-underline-offset: 6px; }
@@ -372,27 +380,6 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
 
 .hero-wrap { max-width: 750px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; position: relative; z-index: 2; }
 .hero-headline { text-align: center; }
-.hero-avatar {
-  width: 1.05em;
-  height: 1.05em;
-  border-radius: 50%;
-  border: 2.5px solid var(--dark);
-  overflow: hidden;
-  display: inline-flex;
-  vertical-align: middle;
-  background: var(--white);
-  margin: 0 0.14em;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), 0 6px 16px rgba(10, 82, 240, 0.15);
-  cursor: pointer;
-  user-select: none;
-}
-.hero-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transform: scale(1.05);
-}
 .hero-sub { color: rgba(29, 29, 29, 0.75); }
 
 /* ---- Page Hero (Projects & Contact matching Home Hero) ---- */

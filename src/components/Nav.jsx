@@ -25,6 +25,9 @@ export default function Nav() {
           transition={{ type: 'spring', duration: 0.8, bounce: 0.2 }}
         >
           <Link to="/" className="header-logo" onClick={() => setOpen(false)}>
+            <span className="logo-mascot" aria-hidden="true">
+              <img src="/mascot/resting-chin.png" alt="" />
+            </span>
             <NameMark>{nav.name}</NameMark>
           </Link>
 
