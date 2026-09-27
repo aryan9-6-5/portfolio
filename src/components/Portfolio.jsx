@@ -16,9 +16,7 @@ const STORAGE_KEY = 'portfolio_punched_projects_v3'
 /**
  * ScrollPunchTicket
  * An individual project ticket in standard document flow.
- * As the user scrolls down, the mechanical puncher glides into view from the left,
- * clamps and punches the ticket with realistic sound and recoil, stamps it PUNCHED,
- * and retracts offscreen. The ticket permanently retains its punched state!
+ * Displays punched state, sound, and triggers the single global stapler on scroll/click.
  */
 function ScrollPunchTicket({
   project,
@@ -26,134 +24,19 @@ function ScrollPunchTicket({
   total,
   isPunched,
   isCurrentlyPunching,
-  onPunch,
+  onManualPunch,
   onSelect,
-  isMobile,
+  setRef,
 }) {
-  const itemRef = useRef(null)
-  const isPunchedRef = useRef(isPunched)
-  useEffect(() => {
-    isPunchedRef.current = isPunched
-  }, [isPunched])
-
-  const ALIGNED_PUNCH_X = isMobile ? -170 : -188
-  const OFFSCREEN_LEFT_X = isMobile ? -380 : -580
-
-  const [puncherX, setPuncherX] = useState(OFFSCREEN_LEFT_X)
-  const [isPunching, setIsPunching] = useState(false)
-  const manualPunchingRef = useRef(false)
-  const hasTriggeredRef = useRef(isPunched)
-  const isReadyRef = useRef(false)
-
-  useEffect(() => {
-    // Grace period on route change/mount to prevent auto-punching during navigation scroll
-    const timer = setTimeout(() => {
-      isReadyRef.current = true
-    }, 450)
-    return () => clearTimeout(timer)
-  }, [])
-
-  useEffect(() => {
-    if (!isPunched) {
-      hasTriggeredRef.current = false
-    }
-  }, [isPunched])
-
-  // Track scroll progress through this specific ticket container
-  const { scrollYProgress } = useScroll({
-    target: itemRef,
-    offset: ['start end', 'end start'],
-  })
-
-  useMotionValueEvent(scrollYProgress, 'change', (progress) => {
-    if (!isReadyRef.current) return
-    if (manualPunchingRef.current) return
-
-    // If ticket is already punched, puncher stays offscreen
-    if (isPunchedRef.current) {
-      if (puncherX !== OFFSCREEN_LEFT_X) {
-        setPuncherX(OFFSCREEN_LEFT_X)
-        setIsPunching(false)
-      }
-      return
-    }
-
-    // Scroll trigger zone:
-    // progress = 0: entering bottom of screen
-    // progress = 0.5: perfectly centered in screen
-    // progress = 1: leaving top of screen
-    if (progress < 0.32 || progress > 0.68) {
-      setPuncherX(OFFSCREEN_LEFT_X)
-      setIsPunching(false)
-      // If user quickly scrolled past this ticket without stopping, ensure it gets marked punched
-      if (progress >= 0.50 && !hasTriggeredRef.current && !isPunchedRef.current) {
-        hasTriggeredRef.current = true
-        onPunch(project)
-      }
-    } else if (progress < 0.46) {
-      // Gliding in smoothly from left margin toward the ticket stub
-      const t = (progress - 0.32) / 0.14
-      const eased = Math.sin((t * Math.PI) / 2)
-      setPuncherX(OFFSCREEN_LEFT_X + eased * (ALIGNED_PUNCH_X - OFFSCREEN_LEFT_X))
-      setIsPunching(false)
-    } else if (progress <= 0.56) {
-      // CLAMP DOWN! FIRM PUNCH!
-      setPuncherX(ALIGNED_PUNCH_X)
-      setIsPunching(true)
-
-      if (!hasTriggeredRef.current && !isPunchedRef.current) {
-        hasTriggeredRef.current = true
-        onPunch(project)
-      }
-    } else {
-      // Retracting smoothly back to the left
-      const t = (progress - 0.56) / 0.12
-      const eased = t * t
-      setPuncherX(ALIGNED_PUNCH_X + eased * (OFFSCREEN_LEFT_X - ALIGNED_PUNCH_X))
-      setIsPunching(false)
-
-      if (!hasTriggeredRef.current && !isPunchedRef.current) {
-        hasTriggeredRef.current = true
-        onPunch(project)
-      }
-    }
-  })
-
-  // Manual click: puncher glides in, clicks/punches, and glides back out
-  const handleManualPunch = () => {
-    if (isPunchedRef.current) return
-    manualPunchingRef.current = true
-    setPuncherX(ALIGNED_PUNCH_X)
-    setTimeout(() => {
-      setIsPunching(true)
-      onPunch(project)
-      setTimeout(() => {
-        setIsPunching(false)
-        setTimeout(() => {
-          setPuncherX(OFFSCREEN_LEFT_X)
-          manualPunchingRef.current = false
-        }, 160)
-      }, 220)
-    }, 200)
-  }
-
   return (
-    <div ref={itemRef} id={project.id} className="ticket-grid-item">
+    <div ref={setRef} id={project.id} className="ticket-grid-item">
       <ProjectTicket
         project={project}
         total={total}
         isPunched={isPunched}
-        isCurrentlyPunching={isCurrentlyPunching || isPunching}
+        isCurrentlyPunching={isCurrentlyPunching}
         onSelect={onSelect}
-        onManualPunch={handleManualPunch}
-      />
-
-      {/* Mechanical Puncher tool arriving from the left to punch this ticket */}
-      <TicketPuncher
-        x={puncherX}
-        isPunching={isPunching}
-        active={!isPunched}
-        isMobile={isMobile}
+        onManualPunch={() => onManualPunch(project, index)}
       />
     </div>
   )
@@ -161,13 +44,12 @@ function ScrollPunchTicket({
 
 /**
  * ProjectList for standalone pages (like /projects)
- * Renders all project tickets in normal document flow (no stack).
- * The mechanical puncher comes in and punches each project as you scroll down.
- * Punched state is retained during the session and resets on refresh.
+ * Uses exactly ONE single mechanical stapler/puncher across the entire page.
+ * The single stapler aligns dynamically to whichever ticket is currently in view,
+ * glides in from the left to punch the stub, and retracts offscreen.
  */
 export function ProjectList({ items, onSelectProject }) {
   const [selected, setSelected] = useState(null)
-  // Starts fresh on every page load / refresh
   const [punchedIds, setPunchedIds] = useState([])
   const [punchingId, setPunchingId] = useState(null)
   const [fallingDisc, setFallingDisc] = useState(null)
@@ -175,12 +57,32 @@ export function ProjectList({ items, onSelectProject }) {
     typeof window !== 'undefined' ? window.innerWidth <= 900 : false
   )
 
+  const gridRef = useRef(null)
+  const ticketRefs = useRef([])
+  const isManualRef = useRef(false)
+  const isReadyRef = useRef(false)
+
+  const ALIGNED_PUNCH_X = isMobile ? -170 : -188
+  const OFFSCREEN_LEFT_X = isMobile ? -380 : -580
+
+  const [puncherX, setPuncherX] = useState(OFFSCREEN_LEFT_X)
+  const [puncherY, setPuncherY] = useState(140)
+  const [isPunching, setIsPunching] = useState(false)
+
   useEffect(() => {
     function onResize() {
       setIsMobile(window.innerWidth <= 900)
     }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Grace period on route mount to avoid auto-punching during navigation scroll
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      isReadyRef.current = true
+    }, 450)
+    return () => clearTimeout(timer)
   }, [])
 
   // Clear legacy storage on mount so every refresh starts with clean tickets
@@ -215,6 +117,115 @@ export function ProjectList({ items, onSelectProject }) {
     }
   }, [fallingDisc])
 
+  // Single stapler scroll coordinator
+  useEffect(() => {
+    let ticking = false
+
+    const updateStapler = () => {
+      ticking = false
+      if (!isReadyRef.current || isManualRef.current || !gridRef.current) return
+
+      const vhCenter = window.innerHeight * 0.5
+      let closest = null
+      let closestDist = Infinity
+      let closestIndex = -1
+
+      items.forEach((item, idx) => {
+        const el = ticketRefs.current[idx]
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        const itemCenter = rect.top + rect.height * 0.5
+        const dist = Math.abs(itemCenter - vhCenter)
+        if (dist < closestDist) {
+          closestDist = dist
+          closest = item
+          closestIndex = idx
+        }
+      })
+
+      if (closest && closestIndex >= 0) {
+        const el = ticketRefs.current[closestIndex]
+        const gridRect = gridRef.current.getBoundingClientRect()
+        const rect = el.getBoundingClientRect()
+        const targetY = rect.top - gridRect.top + rect.height * 0.5
+
+        setPuncherY(targetY)
+
+        // Normalized progress through the viewport trigger zone
+        const progress = 1 - (rect.top - (vhCenter - rect.height * 0.6)) / (rect.height * 1.6)
+        const isPunched = punchedIds.includes(closest.id)
+
+        if (isPunched) {
+          setPuncherX(OFFSCREEN_LEFT_X)
+          setIsPunching(false)
+        } else if (progress < 0.32 || progress > 0.68) {
+          setPuncherX(OFFSCREEN_LEFT_X)
+          setIsPunching(false)
+          if (progress >= 0.50) {
+            handlePunch(closest)
+          }
+        } else if (progress < 0.46) {
+          const t = (progress - 0.32) / 0.14
+          const eased = Math.sin((t * Math.PI) / 2)
+          setPuncherX(OFFSCREEN_LEFT_X + eased * (ALIGNED_PUNCH_X - OFFSCREEN_LEFT_X))
+          setIsPunching(false)
+        } else if (progress <= 0.56) {
+          setPuncherX(ALIGNED_PUNCH_X)
+          setIsPunching(true)
+          handlePunch(closest)
+        } else {
+          const t = (progress - 0.56) / 0.12
+          const eased = t * t
+          setPuncherX(ALIGNED_PUNCH_X + eased * (OFFSCREEN_LEFT_X - ALIGNED_PUNCH_X))
+          setIsPunching(false)
+        }
+      }
+    }
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateStapler)
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    updateStapler()
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [items, punchedIds, isMobile, handlePunch, ALIGNED_PUNCH_X, OFFSCREEN_LEFT_X])
+
+  // Manual click on ticket stub
+  const handleManualPunch = (project, idx) => {
+    if (punchedIds.includes(project.id) || !gridRef.current) return
+    const el = ticketRefs.current[idx]
+    if (!el) return
+
+    isManualRef.current = true
+    const gridRect = gridRef.current.getBoundingClientRect()
+    const rect = el.getBoundingClientRect()
+    const targetY = rect.top - gridRect.top + rect.height * 0.5
+
+    setPuncherY(targetY)
+    setPuncherX(ALIGNED_PUNCH_X)
+
+    setTimeout(() => {
+      setIsPunching(true)
+      handlePunch(project)
+      setTimeout(() => {
+        setIsPunching(false)
+        setTimeout(() => {
+          setPuncherX(OFFSCREEN_LEFT_X)
+          isManualRef.current = false
+        }, 160)
+      }, 220)
+    }, 200)
+  }
+
   const handleReset = () => {
     setPunchedIds([])
   }
@@ -223,20 +234,41 @@ export function ProjectList({ items, onSelectProject }) {
 
   return (
     <>
-      <div className="collectible-tickets-grid">
+      <div ref={gridRef} className="collectible-tickets-grid" style={{ position: 'relative' }}>
         {items.map((item, idx) => (
           <ScrollPunchTicket
             key={item.id || item.name}
+            setRef={(el) => (ticketRefs.current[idx] = el)}
             project={item}
             index={idx}
             total={items.length}
             isPunched={punchedIds.includes(item.id)}
             isCurrentlyPunching={punchingId === item.id}
-            onPunch={handlePunch}
+            onManualPunch={handleManualPunch}
             onSelect={handleSelect}
             isMobile={isMobile}
           />
         ))}
+
+        {/* EXACTLY ONE SINGLE MECHANICAL STAPLER / PUNCHER FOR THE ENTIRE PROJECTS PAGE */}
+        <div
+          className="single-project-puncher-wrap"
+          style={{
+            position: 'absolute',
+            top: `${puncherY}px`,
+            left: 0,
+            zIndex: 65,
+            pointerEvents: 'none',
+            transition: isManualRef.current ? 'top 0.22s cubic-bezier(0.2, 1.4, 0.4, 1)' : 'none',
+          }}
+        >
+          <TicketPuncher
+            x={puncherX}
+            isPunching={isPunching}
+            active={true}
+            isMobile={isMobile}
+          />
+        </div>
       </div>
 
       {/* Floating Punch Tray Dock on Projects Page */}
