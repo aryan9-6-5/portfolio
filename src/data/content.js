@@ -509,7 +509,7 @@ export const contact = {
   eyebrow: "Let's talk",
   headline: "Let's build something.",
   sub: 'Open to AI/ML and full-stack roles. The fastest way to reach me:',
-  handwritten: 'usually reply within 24h',
+  handwritten: 'We can do this all day , IFUKUK',
   links: [
     { label: 'Email', value: '965aryanhanumakonda@gmail.com', href: 'mailto:965aryanhanumakonda@gmail.com', icon: 'mail' },
     { label: 'GitHub', value: 'github.com/aryan9-6-5', href: 'https://github.com/aryan9-6-5', icon: 'github' },
