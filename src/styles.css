@@ -6014,7 +6014,8 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   .about-mobile-mascot-tall-img {
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    object-fit: contain;
+    object-position: center center;
     display: block;
   }
 
