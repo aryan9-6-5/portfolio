@@ -50,7 +50,7 @@ export default function HeroCloud({ theme = 'blue' }) {
 
       {/* Mobile Vertical Puffy Cloud Shape - Envelops headline, avatar, subtitle, and buttons */}
       <svg
-        viewBox="0 0 540 680"
+        viewBox="0 -30 540 750"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="hero-cloud-svg hero-cloud-mobile"

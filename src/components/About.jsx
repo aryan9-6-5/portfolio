@@ -210,135 +210,87 @@ function DesktopAboutStage() {
 
 /**
  * Mobile Thought Cloud Stage:
- * Pinned scroll-synced interactive story where Aryan stands thinking at top,
- * and thought bubbles pop in dynamically with ray bursts, tails, and active tab steppers.
+ * Displays full-height seamless mascot on the left (/about/about-mascot-tall.png)
+ * and all 4 gracefully styled story cards on the right appearing one after the other.
+ * Zero image cutouts inside cards — pure typography, pill badges, and layered paper aesthetics.
  */
 function MobileAboutStage() {
-  const containerRef = useRef(null)
   const [activeIdx, setActiveIdx] = useState(0)
-  const total = about.thoughts.length
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  })
-
-  useMotionValueEvent(scrollYProgress, 'change', (progress) => {
-    const slot = Math.min(Math.floor(progress * total), total - 1)
-    setActiveIdx(slot)
-  })
-
-  const currentThought = about.thoughts[activeIdx] || about.thoughts[0]
-
-  const handleSelect = (idx) => {
-    setActiveIdx(idx)
-  }
-
-  const handlePrev = () => {
-    setActiveIdx((prev) => Math.max(0, prev - 1))
-  }
-
-  const handleNext = () => {
-    setActiveIdx((prev) => Math.min(total - 1, prev + 1))
-  }
+  const storyCards = about.mobileStoryCards || []
 
   return (
-    <section id="about" ref={containerRef} className="about-mobile-pinned-section">
-      <div className="about-mobile-stage">
-        {/* Top Header */}
+    <section id="about" className="about-mobile-section">
+      <div className="about-mobile-container">
+        {/* Header */}
         <div className="about-mobile-header">
           <span className="about-mobile-eyebrow">{about.eyebrow}</span>
           <h2 className="about-mobile-heading">{about.heading}</h2>
+          <p className="about-mobile-sub">Four core convictions that guide how I architect systems.</p>
         </div>
 
-        {/* Mascot Thinking Area */}
-        <div className="about-mobile-mascot-wrap">
-          <img
-            src="/about-mascot-standing.png"
-            alt="Aryan thinking with crossed arms"
-            className="about-mobile-mascot-img"
-          />
-        </div>
-
-        {/* Interactive Pill Stepper */}
-        <div className="about-mobile-stepper" role="tablist" aria-label="Thought stepper">
-          {about.thoughts.map((t, i) => (
-            <button
-              key={t.step}
-              type="button"
-              role="tab"
-              aria-selected={activeIdx === i}
-              className={`about-stepper-btn ${activeIdx === i ? 'is-active' : ''}`}
-              onClick={() => handleSelect(i)}
-            >
-              <span className="stepper-num">{t.step}</span>
-              <span className="stepper-label">{t.tag.split(' ')[0]}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Active Thought Bubble with AnimatePresence Spring Pop */}
-        <div className="about-mobile-cloud-viewport">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentThought.step}
-              className="about-mobile-cloud-card"
-              initial={{ opacity: 0, scale: 0.88, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: -12 }}
-              transition={{ type: 'spring', stiffness: 440, damping: 26 }}
-            >
-              <RayBursts position={activeIdx % 2 === 0 ? 'top-left' : 'top-right'} />
-              <div className={`card thought-cloud-bubble ${currentThought.color} mobile-thought-bubble`}>
-                <div className="mobile-bubble-badge-row">
-                  <span className="thought-step-badge">
-                    Thought {currentThought.step} / 04 · {currentThought.tag}
-                  </span>
-                </div>
-                <h3 className="thought-heading">{currentThought.title}</h3>
-                <p className="thought-text">{currentThought.thought}</p>
-              </div>
-              <ThoughtCloudTail position="top-center" />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Bottom Pagination & Scroll Hint */}
-        <div className="about-mobile-nav-bar">
-          <button
-            type="button"
-            className="about-nav-arrow"
-            onClick={handlePrev}
-            disabled={activeIdx === 0}
-            aria-label="Previous thought"
-          >
-            ←
-          </button>
-          <div className="about-nav-dots">
-            {about.thoughts.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`about-nav-dot ${activeIdx === i ? 'dot-active' : ''}`}
-                onClick={() => handleSelect(i)}
-                aria-label={`Jump to thought ${i + 1}`}
+        {/* 2-Column Split: Seamless Mascot Left + Graceful Story Cards Right */}
+        <div className="about-mobile-layout">
+          {/* Left Column: Seamless Sticky Tall Mascot */}
+          <div className="about-mobile-left">
+            <div className="about-mobile-mascot-wrapper">
+              <img
+                src="/about/about-mascot-tall.png"
+                alt="Aryan mascot standing"
+                className="about-mobile-mascot-tall-img"
               />
+            </div>
+          </div>
+
+          {/* Right Column: Cards Stream with Integrated Timeline */}
+          <div className="about-mobile-right">
+            <div className="about-mobile-dashed-line" aria-hidden="true" />
+
+            {storyCards.map((card, index) => (
+              <motion.div
+                key={card.num}
+                className="about-mobile-story-card-wrap"
+                initial={{ opacity: 0, y: 32, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: false, amount: 0.28, margin: '-5% 0px -10% 0px' }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 24,
+                  delay: 0.04,
+                }}
+                onViewportEnter={() => setActiveIdx(index)}
+              >
+                {/* Node Dot on the dashed line */}
+                <div
+                  className={`about-card-node-dot ${activeIdx === index ? 'is-active' : ''}`}
+                  style={{ backgroundColor: card.dotColor }}
+                  aria-hidden="true"
+                />
+
+                {/* Accent Backdrop Sheet peeking behind */}
+                <div
+                  className="about-card-accent-backing"
+                  style={{ backgroundColor: card.accentColor }}
+                  aria-hidden="true"
+                />
+
+                {/* Main White Card — Pure Graceful Typography, No Images */}
+                <div className="about-mobile-story-card">
+                  <div className="about-card-content">
+                    <span
+                      className="about-card-pill"
+                      style={{ backgroundColor: card.badgeBg }}
+                    >
+                      {card.num}
+                    </span>
+                    <h3 className="about-card-title">{card.title}</h3>
+                    <p className="about-card-desc">{card.text}</p>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
-          <button
-            type="button"
-            className="about-nav-arrow"
-            onClick={handleNext}
-            disabled={activeIdx === total - 1}
-            aria-label="Next thought"
-          >
-            →
-          </button>
         </div>
-
-        <span className="about-mobile-scroll-hint">
-          Scroll down or tap pills to reveal thoughts ↓
-        </span>
       </div>
     </section>
   )

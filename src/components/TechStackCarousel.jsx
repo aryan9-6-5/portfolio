@@ -71,6 +71,18 @@ const TECH_LOGOS = [
     name: 'DuckDB',
     svg: `<svg viewBox="0 0 48 48" width="40" height="40"><rect width="48" height="48" rx="8" fill="#FFF100"/><path fill="#000" d="M34 22c0-5.5-4.5-10-10-10s-10 4.5-10 10v4c0 5.5 4.5 10 10 10s10-4.5 10-10v-4zm-14 0a4 4 0 118 0v4a4 4 0 11-8 0v-4z"/></svg>`,
   },
+  {
+    name: 'n8n',
+    svg: `<svg viewBox="0 0 48 48" width="40" height="40"><rect width="48" height="48" rx="8" fill="#EA4B71"/><circle cx="15" cy="24" r="4.5" fill="#fff"/><circle cx="33" cy="16" r="4" fill="#fff"/><circle cx="33" cy="32" r="4" fill="#fff"/><path d="M15 24h18M33 16v16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  },
+  {
+    name: 'Qdrant',
+    svg: `<svg viewBox="0 0 48 48" width="40" height="40"><rect width="48" height="48" rx="8" fill="#DC2626"/><path fill="#fff" d="M24 10l12 7v14l-12 7-12-7V17l12-7zm0 4l-8.5 5v10L24 34l8.5-5V19L24 14z"/><circle cx="24" cy="24" r="4" fill="#fff"/></svg>`,
+  },
+  {
+    name: 'AWS',
+    svg: `<svg viewBox="0 0 48 48" width="40" height="40"><rect width="48" height="48" rx="8" fill="#232F3E"/><path fill="#FF9900" d="M14 26.5c3.5 2.2 8 3.5 13 3.5 5.5 0 10.5-1.5 14.5-4 .4-.3.9.1.6.5-4.2 3.8-9.8 5.5-15.1 5.5-5.5 0-10.8-1.8-14.8-4.8-.4-.3-.1-.9.4-.7zm27.8-1.7c-.5-.7-3.1-.3-4.3-.2-.4 0-.4-.4-.1-.6 1.8-1.3 4.8-1 5.3-.3.4.6-.2 3.6-1.9 5.1-.3.3-.6.1-.5-.2.5-1 1.6-3.1 1.5-3.8z"/><path fill="#fff" d="M19 14h2.5l3.5 9h-2.2l-.7-2h-3.7l-.7 2H15.5l3.5-9zm1.7 5.3l-1.1-3.2-1.1 3.2h2.2zM28 14h2.2l1.6 6.3 1.8-6.3h2l1.8 6.3 1.6-6.3H41l-2.4 9h-2.1l-1.8-6.1-1.8 6.1H30.4L28 14z"/></svg>`,
+  },
 ]
 
 export default function TechStackCarousel() {

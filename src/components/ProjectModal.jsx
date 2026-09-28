@@ -185,21 +185,21 @@ const PROJECT_DETAILS = {
     ],
   },
   placementguard: {
-    tagline: 'Comprehensive campus placement prep platform with algorithmic roadmaps & test analytics',
+    tagline: 'Automated Telegram moderation bot for college placement groups built on n8n & PostgreSQL',
     overview:
-      'Placement Guard is a student engineering readiness portal designed to prepare undergraduates for rigorous technical software interviews. It bundles curriculum tracks, company-specific test simulations, and real-time skill radar charts.',
+      'PlacementGuard is an automated Telegram moderation bot for college placement groups, built on n8n, PostgreSQL, and the Telegram Bot API. It monitors group messages and join requests, enforcing deterministic rules with no AI/LLM in the loop: content moderation (deleting student messages containing link + spam keywords while preserving admin messages) and identity format checks (enforcing RollNumber - Full Name before approval). Every decision is logged to PostgreSQL for a tamper-evident audit trail.',
     architecture: [
-      { label: 'Frontend', desc: 'React 18 single-page application with modular state containers' },
-      { label: 'Styling', desc: 'Tailored responsive CSS3 architecture with fluid dark/light transitions' },
-      { label: 'State & Storage', desc: 'Client-side state synchronization with persistent progress caching' },
-      { label: 'Analytics', desc: 'Algorithmic performance grading with percentile score calculations' },
+      { label: 'Workflow Engine', desc: 'n8n polling Telegram getUpdates on a schedule (local machine, zero public webhooks needed)' },
+      { label: 'Database', desc: 'PostgreSQL audit schema logging moderation_events and join_requests with full reasons' },
+      { label: 'Content Filter', desc: 'Deterministic scam/spam link detection; student messages purged, admin messages bypass completely' },
+      { label: 'Identity Verification', desc: 'Enforces RollNumber - Full Name display name format; declines send automated instructional DMs' },
     ],
     challenge:
-      'Structuring dynamic interview topic roadmaps with prerequisite dependencies while preserving responsive performance across low-end mobile devices commonly used by students. Solved via lazy-loaded module trees and lightweight SVG graph rendering.',
+      'Eliminating false positives and high latency in active college recruitment chats without incurring recurring LLM API costs or hallucination hazards. Solved via deterministic regex heuristics, complete admin bypass, and transactional PostgreSQL event logging in Docker Compose.',
     metrics: [
-      { value: '100%', label: 'Client-side Offline' },
-      { value: '120+', label: 'Curated Problems' },
-      { value: '60 FPS', label: 'Smooth Animation' },
+      { value: '100%', label: 'Deterministic' },
+      { value: '$0', label: 'LLM Cost' },
+      { value: 'Full Audit', label: 'PostgreSQL Log' },
     ],
   },
   studysmart: {

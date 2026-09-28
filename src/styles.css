@@ -5837,11 +5837,91 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
    - Nothing here touches desktop (min-width: 901px) at all.
    ========================================================================== */
 @media (max-width: 900px) {
-  /* ---- Hero: the fixed top padding plus the full-height cloud graphic
-     pushed the headline below the fold on tablet, so nothing but the
-     nav and the cloud was visible without scrolling. ---- */
-  .hero { padding: 130px var(--gutter) 60px; }
-  .hero-cloud-wrapper { height: min(460px, 62vh); }
+  /* ---- Hero (Mobile & Tablet <= 900px) ---- */
+  .hero {
+    padding: 105px var(--gutter) 50px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .hero-wrap {
+    max-width: 440px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 24px 14px 28px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 14px !important;
+    position: relative !important;
+    z-index: 5 !important;
+  }
+
+  .hero-cloud-desktop { display: none !important; }
+  .hero-cloud-mobile { display: block !important; }
+
+  .hero-cloud-wrapper {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: min(520px, 98vw) !important;
+    height: 100% !important;
+    min-height: 520px !important;
+    max-height: 680px !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .hero-cloud-svg {
+    width: 100% !important;
+    height: 100% !important;
+    filter: drop-shadow(0 14px 32px rgba(10, 82, 240, 0.14)) drop-shadow(0 2px 10px rgba(29, 29, 29, 0.04)) !important;
+  }
+
+  .hero-headline {
+    font-size: clamp(26px, 7vw, 34px) !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+  }
+
+  .hero-avatar {
+    width: 1.25em !important;
+    height: 1.25em !important;
+    border-width: 2px !important;
+    vertical-align: middle !important;
+    margin: 0 4px !important;
+  }
+
+  .hero-sub {
+    font-size: 14.5px !important;
+    line-height: 1.5 !important;
+    max-width: 360px !important;
+    text-align: center !important;
+    color: rgba(29, 29, 29, 0.78) !important;
+  }
+
+  .hero-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  .hero-actions .btn {
+    padding: 10px 18px 12px !important;
+    font-size: 13.5px !important;
+    width: auto !important;
+  }
 
   /* ---- Research: the mobile card carousel needs an explicit height on
      every card face so the flip layers (position: absolute; inset: 0)
@@ -5855,209 +5935,247 @@ h1, h2, h3, h4, h5 { font-weight: 500; margin: 0; letter-spacing: -0.02em; }
   }
 
   /* ==========================================================================
-     ABOUT ME — DEDICATED MOBILE PINNED STAGE
+     ABOUT ME — MOBILE SPLIT STAGE: PORTRAIT ON LEFT, 4 BOXES ON SCROLL
      ========================================================================== */
-  .about-mobile-pinned-section {
+  .about-mobile-section {
+    background: #920202;
+    padding: 96px 14px 64px;
     position: relative;
-    height: 250vh;
-    background: #880403;
+    overflow: hidden;
   }
 
-  .about-mobile-stage {
-    position: sticky;
-    top: 0;
-    height: 100vh;
+  .about-mobile-container {
     width: 100%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 72px 16px 20px;
-    box-sizing: border-box;
-    background: #880403;
-    z-index: 10;
+    max-width: 820px;
+    margin: 0 auto;
   }
 
   .about-mobile-header {
     text-align: center;
-    margin-bottom: 2px;
+    margin-bottom: 24px;
   }
 
   .about-mobile-eyebrow {
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: #FCA5A5;
     display: block;
-    margin-bottom: 2px;
-  }
-
-  .about-mobile-heading {
-    font-size: 19px;
-    font-weight: 800;
-    color: #FFFFFF;
-    margin: 0;
-    letter-spacing: -0.02em;
-  }
-
-  .about-mobile-mascot-wrap {
-    height: min(180px, 24vh);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2px 0;
-    pointer-events: none;
-  }
-
-  .about-mobile-mascot-img {
-    height: 100%;
-    max-height: 100%;
-    width: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
-  }
-
-  .about-mobile-stepper {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    width: 100%;
-    max-width: 360px;
-    margin: 4px 0 6px;
-  }
-
-  .about-stepper-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 5px 6px;
-    border-radius: 999px;
-    border: 1.5px solid rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .about-stepper-btn.is-active {
-    background: #FFFFFF;
-    color: #1D1D1D;
-    border-color: #FFFFFF;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-    transform: scale(1.04);
-  }
-
-  .stepper-num {
-    font-family: monospace;
-    font-weight: 800;
-  }
-
-  .about-mobile-cloud-viewport {
-    width: 100%;
-    max-width: 420px;
-    position: relative;
-    min-height: 175px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 4px 0;
-  }
-
-  .about-mobile-cloud-card {
-    width: 100%;
-    position: relative;
-  }
-
-  .mobile-thought-bubble {
-    padding: 16px 20px;
-    border-radius: 24px;
-    border: 3px solid #1D1D1D;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
-  }
-
-  .mobile-bubble-badge-row {
     margin-bottom: 6px;
   }
 
-  .thought-tail.tail-top-center {
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%) rotate(-90deg);
-    flex-direction: row;
-    display: flex !important;
-  }
-
-  .about-mobile-nav-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 4px;
-  }
-
-  .about-nav-arrow {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.12);
+  .about-mobile-heading {
+    font-size: 24px;
+    font-weight: 800;
     color: #FFFFFF;
-    font-size: 15px;
-    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .about-mobile-sub {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.45;
+  }
+
+  /* Two Column Split: Seamless Mascot Left + Graceful Story Cards Right */
+  .about-mobile-layout {
     display: flex;
+    align-items: stretch;
+    gap: 14px;
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Left Column: Seamless Tall Mascot scaled so feet align with Card 04 */
+  .about-mobile-left {
+    flex: 0 0 42%;
+    max-width: 240px;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    pointer-events: none;
+  }
+
+  .about-mobile-mascot-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .about-mobile-mascot-tall-img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    display: block;
+  }
+
+  /* Right Column: Cards Stream with Integrated Timeline */
+  .about-mobile-right {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+    position: relative;
+    padding-left: 16px;
+  }
+
+  .about-mobile-dashed-line {
+    position: absolute;
+    left: 0;
+    top: 24px;
+    bottom: 30px;
+    width: 2px;
+    border-left: 2px dashed rgba(255, 255, 255, 0.42);
+    pointer-events: none;
+  }
+
+  .about-card-node-dot {
+    position: absolute;
+    left: -21px;
+    top: 24px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
+    z-index: 5;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .about-card-node-dot.is-active {
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  }
+
+  .about-mobile-story-card-wrap {
+    width: 100%;
+    position: relative;
+  }
+
+  .about-card-accent-backing {
+    position: absolute;
+    inset: -3px -3px -3px -3px;
+    border-radius: 26px;
+    opacity: 0.95;
+    z-index: 1;
+    transform: rotate(-0.5deg) translate(-2px, 1px);
+  }
+
+  .about-mobile-story-card {
+    position: relative;
+    z-index: 2;
+    background: #FFFFFF;
+    border-radius: 22px;
+    padding: 16px 14px 18px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    border: 1.5px solid rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+  }
+
+  .about-card-content {
+    width: 100%;
+  }
+
+  .about-card-pill {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .about-nav-arrow:hover:not(:disabled) {
-    background: #FFFFFF;
-    color: #1D1D1D;
-    transform: scale(1.1);
-  }
-
-  .about-nav-arrow:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  .about-nav-dots {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .about-nav-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .about-nav-dot.dot-active {
-    width: 20px;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 11.5px;
     border-radius: 999px;
-    background: #FFFFFF;
+    padding: 2.5px 10px;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
   }
 
-  .about-mobile-scroll-hint {
-    font-size: 10px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.55);
-    letter-spacing: 0.05em;
-    text-align: center;
-    margin-top: 2px;
+  .about-card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 5px;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  .about-card-desc {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: #4B5563;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  @media (max-width: 420px) {
+    .about-mobile-section {
+      padding: 84px 10px 44px;
+    }
+    .about-mobile-layout {
+      gap: 10px;
+    }
+    .about-mobile-left {
+      flex: 0 0 42%;
+      max-width: 165px;
+    }
+    .about-mobile-right {
+      padding-left: 14px;
+      gap: 12px;
+    }
+    .about-card-node-dot {
+      left: -19px;
+      width: 10px;
+      height: 10px;
+      border-width: 2px;
+    }
+    .about-mobile-story-card {
+      padding: 13px 11px 14px;
+      border-radius: 18px;
+    }
+    .about-card-title {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .about-card-desc {
+      font-size: 10.5px;
+      line-height: 1.45;
+    }
+    .about-card-pill {
+      font-size: 10px;
+      padding: 2px 8px;
+    }
+  }
+
+  @media (min-width: 600px) and (max-width: 900px) {
+    .about-mobile-left {
+      flex: 0 0 38%;
+      max-width: 280px;
+      top: 84px;
+    }
+    .about-mobile-story-card {
+      padding: 24px 22px;
+      border-radius: 30px;
+    }
+    .about-card-title {
+      font-size: 20px;
+    }
+    .about-card-desc {
+      font-size: 14px;
+      line-height: 1.65;
+    }
   }
 
   /* ---- ScrollFanCards: dynamic mobile vertical card deal and hover lift ---- */
