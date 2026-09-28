@@ -318,7 +318,7 @@ export default function Portfolio({ maxItems = 3 }) {
   // you on a different page instead of leaving you exactly where you
   // were on the homepage.
   const [selectedProject, setSelectedProject] = useState(null)
-  const FEATURED_HOME_IDS = ['multimodalrag', 'retailclassifier', 'studysmart']
+  const FEATURED_HOME_IDS = ['multimodalrag', 'fintrack', 'placementguard']
   const displayItems = FEATURED_HOME_IDS
     .map((id, idx) => {
       const p = projects.items.find((item) => item.id === id)

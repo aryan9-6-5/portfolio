@@ -184,6 +184,24 @@ const PROJECT_DETAILS = {
       { value: '18+', label: 'Retail Categories' },
     ],
   },
+  placementguard: {
+    tagline: 'Comprehensive campus placement prep platform with algorithmic roadmaps & test analytics',
+    overview:
+      'Placement Guard is a student engineering readiness portal designed to prepare undergraduates for rigorous technical software interviews. It bundles curriculum tracks, company-specific test simulations, and real-time skill radar charts.',
+    architecture: [
+      { label: 'Frontend', desc: 'React 18 single-page application with modular state containers' },
+      { label: 'Styling', desc: 'Tailored responsive CSS3 architecture with fluid dark/light transitions' },
+      { label: 'State & Storage', desc: 'Client-side state synchronization with persistent progress caching' },
+      { label: 'Analytics', desc: 'Algorithmic performance grading with percentile score calculations' },
+    ],
+    challenge:
+      'Structuring dynamic interview topic roadmaps with prerequisite dependencies while preserving responsive performance across low-end mobile devices commonly used by students. Solved via lazy-loaded module trees and lightweight SVG graph rendering.',
+    metrics: [
+      { value: '100%', label: 'Client-side Offline' },
+      { value: '120+', label: 'Curated Problems' },
+      { value: '60 FPS', label: 'Smooth Animation' },
+    ],
+  },
   studysmart: {
     tagline: 'Comprehensive campus placement prep platform with algorithmic roadmaps & test analytics',
     overview:
